@@ -11,7 +11,10 @@ library(dplyr)
 library(here)
 library(httr)
 library(ggmap)
+library(ggplot2)
+library(lubridate)
 library(magrittr)
+library(RColorBrewer)
 library(rmarkdown)
 library(rStrava)
 library(usethis)
@@ -22,10 +25,42 @@ rmarkdown::render(here::here("code", "report.Rmd"), output_dir=here:here("docs")
 ```
 
 ```{r download}
-stoken <- httr::config(token = readr::read_file(here::here("config", ".token")) %>%
-                           stringr::str_replace("\n", ""))
-athlete_id <- "23163300"  # from athlete profile url
-athlete_url <- url_athlete(id=athlete_id)
-get_basic(athlete_url, stoken)
-get_athlete(stoken, id=athlete_id)
+stoken <- httr::config(token = readRDS(here::here('.httr-oauth'))[[1]])
+act_list <- get_activity_list(stoken)
+act_data_raw <- compile_activities(act_list)
+readr::write_csv(act_data_raw, here::here("data", "raw", "activities.csv"))
 ``` 
+```{r raw2processed}
+act_data_raw <- readr::read_csv(here::here("data", "raw", "activities.csv"))
+act_data <- act_data_raw %>% mutate(start_date = start_date %>% lubridate::ymd_hms(),
+                    start_date_local = start_date_local %>% lubridate::ymd_hms(),
+                    elapsed_time_min = round((elapsed_time / 60), 1),
+                    elapsed_time_hrs = round((elapsed_time / 60 / 60), 1),
+                    moving_time_min = round((moving_time / 60), 1),
+                    moving_time_hrs = round((moving_time / 60 / 60), 1),
+                    mday = start_date %>% lubridate::ymd_hms() %>% lubridate::mday(),
+                    week = start_date %>% lubridate::ymd_hms() %>% lubridate::floor_date('week'))
+readr::write_csv(act_data, here::here("data", "processed", "activities.csv"))
+```
+```{r filter}
+y2019 <- lubridate::interval(lubridate::ymd("2019-01-01"), lubridate::ymd("2019-12-31"))
+aug2019 <- lubridate::interval(lubridate::ymd("2019-08-01"), lubridate::ymd("2019-08-31"))
+data_2019 <- act_data %>% filter(start_date %within% y2019)
+data_aug <- data_2019 %>% filter(start_date %within% aug2019)
+```
+
+## duration by week
+
+```{r over_time}
+data_2019 %>% 
+    ggplot2::ggplot(aes(x=week, y=elapsed_time_hrs, fill=type)) +
+    geom_col(position="stack") + 
+    scale_fill_brewer(palette = "Paired") +
+    scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %d") + 
+    theme_classic() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
+## cumulative duration
+
