@@ -1,2 +1,5 @@
+.Rproj.user
 .token
-.idea/
+config/.token
+.httr-oath
+.httr-oauth

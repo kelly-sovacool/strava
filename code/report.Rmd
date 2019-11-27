@@ -1,0 +1,31 @@
+---
+title: "Activity Report"
+author: "Kelly Sovacool"
+date: Sys.Date()
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(devtools)
+library(dplyr)
+library(here)
+library(httr)
+library(ggmap)
+library(magrittr)
+library(rmarkdown)
+library(rStrava)
+library(usethis)
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r render,echo=FALSE, eval=FALSE}
+rmarkdown::render(here::here("code", "report.Rmd"), output_dir=here:here("docs"))
+```
+
+```{r download}
+stoken <- httr::config(token = readr::read_file(here::here("config", ".token")) %>%
+                           stringr::str_replace("\n", ""))
+athlete_id <- "23163300"  # from athlete profile url
+athlete_url <- url_athlete(id=athlete_id)
+get_basic(athlete_url, stoken)
+get_athlete(stoken, id=athlete_id)
+``` 
