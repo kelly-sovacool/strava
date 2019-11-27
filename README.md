@@ -11,3 +11,4 @@ Additional dependencies not available in conda:
 - [rStrava](https://github.com/fawda123/rStrava)
 - [googleway](https://cran.r-project.org/package=googleway)
 - [googlePolylines](https://cran.r-project.org/package=googlePolylines)
+- dev version of [lubridate](https://github.com/tidyverse/lubridate)
