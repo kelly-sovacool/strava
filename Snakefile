@@ -14,7 +14,8 @@ if csv_path.exists():
 
 rule targets:
     output:
-        "docs/report.html"
+        "docs/report.html",
+        "README.md"
 
 rule download:
     input:
@@ -49,8 +50,19 @@ rule plot:
 rule render_report:
     input:
         R="code/render.R",
+        rmd="code/report.Rmd",
         plots=rules.plot.output
     output:
-        "docs/report.html"
+        html="docs/report.html",
+        md="docs/report.md"
     script:
         "{input.R}"
+
+rule update_readme:
+    input:
+        report=rules.render_report.output.md,
+        readme="config/README.md"
+    output:
+        "README.md"
+    shell:
+        "cat {input.readme} {input.report} > {output}"
