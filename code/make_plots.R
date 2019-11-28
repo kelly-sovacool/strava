@@ -115,6 +115,7 @@ jitter_plot <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical")))
     ggplot(aes(type, elapsed_time_hrs, color=type)) +
     geom_jitter() +
     scale_color_manual("type", values=colors) +
+    scale_y_continuous(breaks=1:7) +
     theme_classic()
 ggsave(jitter_plot, filename = here::here("figures", "jitter_type_time.png"), height = 7, width = get_width(7))
 
@@ -123,6 +124,7 @@ box_plot_weekday_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elli
     ggplot(aes(wday, elapsed_time_hrs, fill=type)) +
     geom_boxplot(aes(fill=type)) +
     scale_fill_manual("type", values=colors) +
+    scale_y_continuous(breaks=1:7) +
     facet_wrap(~type, nrow = 1) +
     theme_classic()
 ggsave(box_plot_weekday_time, filename = here::here('figures', "box_weekday_time.png"), width=10, height=get_height(10))
@@ -131,7 +133,8 @@ ggsave(box_plot_weekday_time, filename = here::here('figures', "box_weekday_time
 box_plot_weekday_dist <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance, fill=type)) +
     geom_boxplot() +
     scale_fill_manual("type", values=colors) +
-    facet_wrap(~type, scale="free", nrow = 1)
+    facet_wrap(~type, scale="free", nrow = 1) +
+    ylab("Distance (km)")
 ggsave(box_plot_weekday_dist, filename = here::here('figures', "box_weekday_dist.png"), width=10, height=get_height(10))
 
 # cumulative activity time

@@ -16,8 +16,6 @@
 
 ![](box_weekday_time.png)
 
-![](calendar.png)
-
 ![](dag.svg)
 
 ![](jitter_type_time.png)
