@@ -1,119 +1,31 @@
 ---
 title: "Activity Report"
 author: "Kelly Sovacool"
-date: Sys.Date()
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-library(devtools)
-library(dplyr)
-library(here)
-library(httr)
-library(ggmap)
-library(ggplot2)
-library(lubridate)
-library(magrittr)
-library(RColorBrewer)
+library(knitr)
 library(rmarkdown)
-library(rStrava)
-library(usethis)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
-```{r render,echo=FALSE, eval=FALSE}
-rmarkdown::render(here::here("code", "report.Rmd"), output_dir=here:here("docs"))
-```
-
-```{r download}
-stoken <- httr::config(token = readRDS(here::here('.httr-oauth'))[[1]])
-act_list <- get_activity_list(stoken)
-act_data_raw <- compile_activities(act_list)
-readr::write_csv(act_data_raw, here::here("data", "raw", "activities.csv"))
-``` 
-```{r raw2processed}
-act_data <- act_data_raw %>% mutate(start_date = start_date %>% lubridate::ymd_hms(),
-                    start_date_local = start_date_local %>% lubridate::ymd_hms(),
-                    elapsed_time_min = round((elapsed_time / 60), 1),
-                    elapsed_time_hrs = round((elapsed_time / 60 / 60), 1),
-                    moving_time_min = round((moving_time / 60), 1),
-                    moving_time_hrs = round((moving_time / 60 / 60), 1),
-                    mday = start_date %>% lubridate::ymd_hms() %>% lubridate::mday(),
-                    week = start_date %>% lubridate::ymd_hms() %>% lubridate::floor_date('week'),
-                    type = fct_reorder(type, elapsed_time, .fun = sum, .desc=TRUE),
-                    year = start_date %>% lubridate::year()
-                    ) %>%
-    arrange(start_date) %>%
-    group_by(type) %>%
-    mutate(elapsed_hrs_cum_type = cumsum(elapsed_time))
-
-readr::write_csv(act_data, here::here("data", "processed", "activities.csv"))
-```
-```{r globals}
-plot_bar <- function(data) {
-    plot <- data %>% ggplot2::ggplot(aes(x=week, y=elapsed_time_hrs, fill=type)) +
-        geom_col(position="stack") + 
-        scale_fill_manual("type", values=colors) + 
-        ylim(0, 25) +
-        scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %d") + 
-        theme_classic() + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-}
-filter_year <- function(data, date_col, year_str) {
-    year_interval <- lubridate::interval(lubridate::ymd(paste0(year_str, "-01-01")), 
-                                         lubridate::ymd(paste0(year_str, "-12-31")))
-    data %>% filter(UQ(as.symbol(date_col)) %within% year_interval)
-}
-palette = RColorBrewer::brewer.pal(n = act_data$type %>% unique() %>% length(), name = "Paired")
-colors = list()
-
-colors[["Ride"]] <- palette[[4]]
-colors[["Run"]] <- palette[[8]]
-colors[["RockClimbing"]] <- palette[[3]]
-colors[["Rowing"]] <- palette[[1]]
-colors[["Swim"]] <- palette[[2]]        
-colors[["Hike"]] <- palette[[6]]
-colors[["Walk"]] <- palette[[5]] 
-colors[["Elliptical"]] <- palette[[7]]
-
-aspect_ratio <- 4/3
-height <- 5
-width <- height * aspect_ratio
-```
-
 ## Plot duration by week
 
 ```{r}
-plot_bar_all <- plot_bar(act_data) +
-    scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %Y") +
-    ggtitle("All Strava Activities")
-ggsave(plot_bar_all, filename = here::here("figures", "bar_all.png"), 
-       width = width, height = height)
-plot_bar_all
+knitr::include_graphics(here::here("figures", "bar_all.png"))
 ```
 
+## Split by year
+
 ```{r}
-plots = list()
-for (year in 2017:2019) {
-    year <- as.character(year)
-    plot_bar_year <- plot_bar(filter_year(act_data, "start_date", year)) +
-        ggtitle(paste0(year, " Activites"))
-    ggsave(plot_bar_year, filename = here::here("figures", paste0("bar_", year,".png")),
-           width = width, height = height)
-    print(plot_bar_year)
-    plots[[year]] = plot_bar_year
-}
+knitr::include_graphics(here::here("figures", "bar_2017.png"))
+knitr::include_graphics(here::here("figures", "bar_2018.png"))
+knitr::include_graphics(here::here("figures", "bar_2019.png"))
 ```
 
 ## Plot cumulative duration
+
 ```{r}
-plot_line <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
-    geom_line() + 
-    scale_color_brewer(palette = "Dark2") +
-    #scale_color_manual("type", colors) +  # bug in ggplot?
-    scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %Y") + 
-    theme_classic() + 
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    ggtitle("Cumulative Activity Time")
-ggsave(plot_line, filename=here::here("figures", "line_all.png"), width = width, height = height)
-plot_line
+knitr::include_graphics(here::here("figures", "line_all.png"))
 ```
