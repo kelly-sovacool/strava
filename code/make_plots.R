@@ -59,7 +59,7 @@ height <- 5
 width <- height * aspect_ratio
 
 plot_bar_all_week <- plot_bar_week(act_data) +
-    scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %Y") +
+    scale_x_datetime(date_breaks = "4 weeks", date_labels = "%d %b %Y") +
     ggtitle("All Strava Activities")
 ggsave(plot_bar_all_week, filename = filename_bar_all_week,
        width = width, height = height)
@@ -81,7 +81,7 @@ plot_bar_month <- act_data %>%
     ylim(0, 85) +
     scale_x_continuous(breaks=1:12, labels = month.abb)+
     theme_classic()
-ggsave(plot_bar_month, filename=filename_bar_all_month, height=10, width=10)
+ggsave(plot_bar_month, filename=filename_bar_all_month, height=10, width=10*aspect_ratio)
 
 plot_line <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
     geom_line() +
