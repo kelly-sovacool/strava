@@ -12,3 +12,20 @@ Additional dependencies not available in conda:
 - [googleway](https://cran.r-project.org/package=googleway)
 - [googlePolylines](https://cran.r-project.org/package=googlePolylines)
 - dev version of [lubridate](https://github.com/tidyverse/lubridate)
+
+## Workflow
+
+### Run everything
+```
+snakemake
+```
+See the [snakemake documentation](https://snakemake.readthedocs.io/en/stable/) for more on how to use snakemake.
+
+### View the workflow DAG
+```
+snakemake -n --forceall --dag | dot -Tsvg > figures/dag.svg
+```
+
+![](figures/dag.svg)
+
+

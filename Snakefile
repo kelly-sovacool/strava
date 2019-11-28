@@ -1,19 +1,19 @@
 import datetime
 import pathlib
 
-today = datetime.datetime.today()
-years = range(2017, datetime.datetime.today().year+1)
+today = datetime.date.today()
+years = range(2017, today.year+1)
 filename_raw_csv = "data/raw/activities.csv"
 csv_path = pathlib.Path(filename_raw_csv)
 
 # forcerun download rule if the raw data file was last modified before today
 if csv_path.exists():
-    timestamp = datetime.datetime.fromtimestamp(csv_path.stat().st_mtime)
+    timestamp = datetime.date.fromtimestamp(csv_path.stat().st_mtime)
     if today > timestamp:
         csv_path.touch(exist_ok=True)
 
 rule targets:
-    output:
+    input:
         "docs/report.html",
         "README.md"
 
