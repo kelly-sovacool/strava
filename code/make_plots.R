@@ -113,8 +113,8 @@ ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=
 
 # jitterplot type x time
 jitter_plot_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
-    ggplot(aes(type, elapsed_time_hrs, color=type)) +
-    geom_jitter() +
+    ggplot(aes(type, elapsed_time_hrs)) +
+    geom_jitter(aes(color=type, alpha=0.3)) +
     scale_color_manual("type", values=colors) +
     scale_y_continuous(breaks=1:7) +
     theme_classic()
