@@ -21,7 +21,8 @@ if (exists("snakemake")) {
     years = 2017:2019
 }
 
-act_data <- readr::read_csv(filename_csv)
+act_data <- readr::read_csv(filename_csv) %>%
+    mutate(type = fct_reorder(type, elapsed_time, .fun = sum, .desc=TRUE))
 
 set_colors <- function() {
     palette = RColorBrewer::brewer.pal(n = act_data$type %>% unique() %>% length(), name = "Paired")
