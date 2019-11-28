@@ -11,13 +11,20 @@ library(knitr)
 library(rmarkdown)
 knitr::opts_chunk$set(echo = FALSE)
 ```
-## Plot duration by week
+
+## Plot activity duration by month
 
 ```{r}
-knitr::include_graphics(here::here("figures", "bar_all.png"))
+knitr::include_graphics(here::here("figures", "bar_all_month.png"))
 ```
 
-## Split by year
+## Plot activity duration by week
+
+```{r}
+knitr::include_graphics(here::here("figures", "bar_all_week.png"))
+```
+
+### Split by year
 
 ```{r}
 knitr::include_graphics(here::here("figures", "bar_2017.png"))

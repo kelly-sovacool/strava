@@ -28,9 +28,11 @@ snakemake -n --forceall --dag | dot -Tsvg > figures/dag.svg
 
 ![](figures/dag.svg)
 
-## Example plots
+## Plots
 
-![](figures/bar_all.png)
+![](figures/bar_all_month.png)
+
+![](figures/bar_all_week.png)
 
 ![](figures/bar_2019.png)
 
