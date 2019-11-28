@@ -81,7 +81,7 @@ plot_bar_month <- act_data %>%
     ylim(0, 85) +
     scale_x_continuous(breaks=1:12, labels = month.abb)+
     theme_classic()
-ggsave(plot_bar_month, filename=filename_bar_all_month, height=10, width=10*aspect_ratio)
+ggsave(plot_bar_month, filename=filename_bar_all_month, height=10/aspect_ratio, width=10)
 
 plot_line <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
     geom_line() +
