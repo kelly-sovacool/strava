@@ -2,9 +2,8 @@
 title: "Activity Report"
 author: "Kelly Sovacool"
 date: "`r format(Sys.Date(), '%Y-%m-%d')`"
-output: 
+output:
     html_document: default
-    github_document: default
 ---
 
 ```{r setup, include=FALSE}

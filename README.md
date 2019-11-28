@@ -28,20 +28,10 @@ snakemake -n --forceall --dag | dot -Tsvg > figures/dag.svg
 
 ![](figures/dag.svg)
 
+## Example plots
 
-Activity Report
-================
-Kelly Sovacool
-2019-11-27
+![](figures/bar_all.png)
 
-## Plot duration by week
+![](bar_2019.png)
 
-![](/Users/kelly/projects/strava/figures/bar_all.png)<!-- -->
-
-## Split by year
-
-![](/Users/kelly/projects/strava/figures/bar_2017.png)<!-- -->![](/Users/kelly/projects/strava/figures/bar_2018.png)<!-- -->![](/Users/kelly/projects/strava/figures/bar_2019.png)<!-- -->
-
-## Plot cumulative duration
-
-![](/Users/kelly/projects/strava/figures/line_all.png)<!-- -->
+![](figures/line_all.png)

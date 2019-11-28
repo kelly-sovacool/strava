@@ -1,6 +1,7 @@
 .DS_Store
 .Rproj.user
 .snakemake/
+config/config.yml
 .token
 config/.token
 .httr-oauth
