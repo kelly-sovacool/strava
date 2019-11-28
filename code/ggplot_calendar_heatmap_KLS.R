@@ -13,7 +13,7 @@
 #' @param vcGroupingColumnNames The set of columns which together define the group
 #' for the chart to operate within If you plan to facet your plot,
 #' you should specify the same column names to this argument. The function
-#' will automatically add the veriable for the year to the facet.
+#' will automatically add the variable for the year to the facet.
 #' @param dayBorderSize Size of the border around each day
 #' @param dayBorderColour Colour of the border around each day
 #' @param monthBorderSize Size of the border around each month
@@ -68,21 +68,21 @@
 #' p1 +
 #' geom_text(label = '!!!') +
 #' scale_colour_continuous(low = 'red', high = 'green')
-ggplot_calendar_heatmap = function(
+ggplot_calendar_heatmap_KLS = function(
    dtDateValue,
    cDateColumnName = '',
    cValueColumnName = '',
-   vcGroupingColumnNames = 'Year',
-   dayBorderSize = 0.25,
-   dayBorderColour = "black",
-   monthBorderSize = 2,
-   monthBorderColour = "black",
-   monthBorderLineEnd = "round"
+   vcGroupingColumnNames = 'year',
+   dayBorderSize = 0.5,
+   dayBorderColour = "white",
+   monthBorderSize = 0.75,
+   monthBorderColour = "transparent",
+   monthBorderLineEnd = "round",
+   fill_label = "hrs"
 ) {
-
    dtDateValue = copy(data.table(dtDateValue))
-   dtDateValue[, Year := as.integer(strftime(get(cDateColumnName), '%Y'))]
-   vcGroupingColumnNames = unique(c(vcGroupingColumnNames, 'Year'))
+   dtDateValue[, year := as.integer(strftime(get(cDateColumnName), '%Y'))]
+   vcGroupingColumnNames = unique(c(vcGroupingColumnNames, 'year'))
 
    # ensuring that there is an entry for each date for each group of
    # columns that the user has specified
@@ -105,14 +105,13 @@ ggplot_calendar_heatmap = function(
       c(vcGroupingColumnNames,cDateColumnName),
       all = T
    )
-
+   
    # Pre-processing ============================================================
 
    dtDateValue[, MonthOfYear := as.integer(strftime(get(cDateColumnName), '%m'))]
    dtDateValue[, WeekOfYear := 1 + as.integer(strftime(get(cDateColumnName), '%W'))]
    dtDateValue[, DayOfWeek := as.integer(strftime(get(cDateColumnName), '%w'))]
    dtDateValue[DayOfWeek == 0L, DayOfWeek := 7L]
-
 
    # Heatmap-ish layout to chalk out the blocks of colour on dates =============
    ggplotcalendar_heatmap <- ggplot(
@@ -200,7 +199,12 @@ ggplot_calendar_heatmap = function(
          breaks = c(1:7),
          labels = c('Mon','Tue','Wed','Thu','Fri','Sat','Sun'),
          expand = c(0, 0)
-      )
-
+      ) +
+       xlab(NULL) +
+       ylab(NULL) +
+       scale_fill_continuous(name = fill_label, low = "#DAE580", high = "#236327", na.value = "#EFEDE0") +
+       facet_wrap(~year, ncol = 1, drop=TRUE) +
+       theme_tufte() +
+       theme(strip.text = element_text(), axis.ticks = element_blank(), legend.position = "bottom")
    return (ggplotcalendar_heatmap)
 }
