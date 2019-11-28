@@ -13,6 +13,14 @@ Additional dependencies not available in conda:
 - [googlePolylines](https://cran.r-project.org/package=googlePolylines)
 - dev version of [lubridate](https://github.com/tidyverse/lubridate)
 
+## Setup
+
+Follow the instructions in the [rStrava documentation](https://github.com/fawda123/rStrava#api-functions-token) to
+generate an API token to access your strava data.
+
+Once you have an API token cached as an R data file in `.httr-oath`, you're ready to run this workflow.
+Be sure not to commit your token to GitHub!
+
 ## Workflow
 
 ### Run everything
