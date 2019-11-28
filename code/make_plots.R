@@ -26,7 +26,7 @@ if (exists("snakemake")) {
 }
 
 set_colors <- function(data) {
-    palette = RColorBrewer::brewer.pal(n = data$type %>% unique() %>% length(), name = "Paired")
+    palette = RColorBrewer::brewer.pal(n = 8, name = "Paired")
     colors = list()
     colors[["Ride"]] <- palette[[4]]
     colors[["Run"]] <- palette[[8]]
@@ -128,10 +128,11 @@ box_plot_weekday_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elli
 ggsave(box_plot_weekday_time, filename = here::here('figures', "box_weekday_time.png"), width=10, height=get_height(10))
 
 # boxplot weekday x distance
-act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance, fill=type)) +
+box_plot_weekday_dist <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance, fill=type)) +
     geom_boxplot() +
     scale_fill_manual("type", values=colors) +
     facet_wrap(~type, scale="free", nrow = 1)
+ggsave(box_plot_weekday_dist, filename = here::here('figures', "box_weekday_dist.png"), width=10, height=get_height(10))
 
 # cumulative activity time
 line_plot <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +

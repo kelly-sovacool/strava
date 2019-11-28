@@ -1,5 +1,6 @@
 .DS_Store
 .Rproj.user
+Rplots.pdf
 .snakemake/
 config/config.yml
 .token

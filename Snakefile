@@ -14,7 +14,8 @@ if csv_path.exists():
 
 rule targets:
     input:
-        "docs/report.html"
+        "docs/report.html",
+        "figures/README.md"
 
 rule download:
     input:
@@ -57,3 +58,17 @@ rule render_report:
         html="docs/report.html"
     script:
         "{input.R}"
+
+rule cat_figures_readme:
+    input:
+        figures=rules.plot.output
+    output:
+        md="figures/README.md"
+    run:
+        exts = {'svg', 'png', 'jpg'}
+        with open(output.md, "w") as outfile:
+            outfile.write("# Plots\n\n")
+            for plot_fn in sorted(os.listdir("figures/")):
+                if plot_fn.split('.')[-1] in exts:
+                    outfile.write(f"![]({plot_fn})\n\n")
+
