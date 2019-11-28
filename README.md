@@ -32,6 +32,6 @@ snakemake -n --forceall --dag | dot -Tsvg > figures/dag.svg
 
 ![](figures/bar_all.png)
 
-![](bar_2019.png)
+![](figures/bar_2019.png)
 
 ![](figures/line_all.png)
