@@ -77,12 +77,11 @@ plot_bar_month <- act_data %>%
     ggplot2::ggplot(aes(x=month, y=elapsed_time_hrs, fill=type)) +
     geom_col(position="stack") +
     scale_fill_manual("type", values=colors) +
-    #ylim(0, 25) +
-    facet_wrap(~year) +
+    facet_wrap(~year, nrow = length(act_data$year %>% unique()), scale="free") +
+    ylim(0, 85) +
     scale_x_continuous(breaks=1:12, labels = month.abb)+
-    theme_classic() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5))
-ggsave(plot_bar_month, filename=filename_bar_all_month, height=height, width=width)
+    theme_classic()
+ggsave(plot_bar_month, filename=filename_bar_all_month, height=10, width=10)
 
 plot_line <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
     geom_line() +
