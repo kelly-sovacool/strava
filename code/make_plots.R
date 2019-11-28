@@ -53,6 +53,7 @@ default_width <- get_width()
 get_height <- function(width=8, aspect_ratio=4/3) {
     width / aspect_ratio
 }
+default_alpha <- 0.9
 
 act_data <- readr::read_csv(filename_csv) %>%
     mutate(type = fct_reorder(type, elapsed_time, .fun = sum, .desc=TRUE),
@@ -114,7 +115,7 @@ ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=
 # jitterplot type x time
 jitter_plot_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
     ggplot(aes(type, elapsed_time_hrs)) +
-    geom_jitter(aes(color=type, alpha=0.3)) +
+    geom_jitter(aes(color=type)) +#, alpha=default_alpha)) +
     scale_color_manual("type", values=colors) +
     scale_y_continuous(breaks=1:7) +
     theme_classic()
@@ -132,7 +133,7 @@ ggsave(box_plot_weekday_time, filename = here::here('figures', "box_weekday_time
 
 # jitter weekday x distance
 jitter_plot_weekday_dist_grid <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance)) +
-    geom_jitter(aes(color=type, alpha=0.3)) +
+    geom_jitter(aes(color=type)) +#, alpha=default_alpha)) +
     scale_color_manual("type", values=colors) +
     facet_grid(type~wday, scale="free") +
     ylab("Distance (km)") +
