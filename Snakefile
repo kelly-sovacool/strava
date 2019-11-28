@@ -39,7 +39,6 @@ rule plot:
         R="code/make_plots.R",
         csv=rules.process.output.csv
     output:
-        line_plot="figures/line_all.png",
         bar_plot_week="figures/bar_all_week.png",
         bar_plot_month="figures/bar_all_month.png",
         bar_plot_day="figures/bar_all_day.png",

@@ -36,6 +36,8 @@ act_data <- act_data_raw %>%
            ) %>%
     arrange(start_date) %>%
     group_by(type) %>%
-    mutate(elapsed_hrs_cum_type = cumsum(elapsed_time))
+    mutate(elapsed_hrs_cum_type = cumsum(elapsed_time),
+           elapsed_dist_cum_type = cumsum(distance)
+           )
 
 readr::write_csv(act_data, filename_csv_processed)

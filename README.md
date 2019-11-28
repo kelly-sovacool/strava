@@ -46,4 +46,4 @@ See all plots in the [figures](figures/) directory
 
 ![](figures/jitter_type_time.png)
 
-![](figures/line_all.png)
+![](figures/line_time.png)

@@ -12,14 +12,12 @@ library(tidyr)
 
 if (exists("snakemake")) {
     filename_csv <- snakemake@input[["csv"]]
-    filename_line <- snakemake@output[["line_plot"]]
     filename_bar_all_week <- snakemake@output[["bar_plot_week"]]
     filename_bar_all_month <- snakemake@output[["bar_plot_month"]]
     filename_bar_all_day <- snakemake@output[["bar_plot_day"]]
     years = snakemake@params[["years"]]
 } else {
     filename_csv <- here::here("data", "processed", "activities.csv")
-    filename_line <- here::here("figures", "line_all.png")
     filename_bar_all_week <- here::here("figures", "bar_all_week.png")
     filename_bar_all_month <- here::here("figures", "bar_all_month.png")
     filename_bar_all_day <- here::here("figures", "bar_all_day.png")
@@ -171,12 +169,24 @@ box_plot_weekday_dist_wrap <- act_data %>% filter(!(type %in% c("Hike", "Walk", 
 ggsave(box_plot_weekday_dist_wrap, filename = here::here('figures', "box_weekday_dist_wrap.png"), width=10, height=get_height(10))
 ######
 # cumulative activity time
-line_plot <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
+line_plot_time <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
     geom_line() +
     scale_color_brewer(palette = "Dark2") +
     #scale_color_manual("type", colors) +  # bug in ggplot?
     scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %Y") +
+    scale_y_continuous(breaks=pretty_breaks()) +
     theme_classic() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    ggtitle("Cumulative Activity Time")
-ggsave(line_plot, filename=filename_line, width = default_width, height = default_height)
+    ggtitle("Cumulative Activity Time (hrs)")
+ggsave(line_plot_time, filename=here::here("figures", "line_time.png"), width = default_width, height = default_height)
+# cumulative activity distance
+line_plot_dist <- act_data %>% ggplot(aes(x=start_date, y=elapsed_dist_cum_type, color=type)) +
+    geom_line() +
+    scale_color_brewer(palette = "Dark2") +
+    #scale_color_manual("type", colors) +  # bug in ggplot?
+    scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %Y") +
+    scale_y_continuous(breaks=pretty_breaks()) +
+    theme_classic() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Cumulative Activity Distance (km)")
+ggsave(line_plot_dist, filename=here::here("figures", "line_dist.png"), width = default_width, height = default_height)
