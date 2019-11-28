@@ -1,4 +1,4 @@
-# adapted from https://gist.github.com/marcusvolz/84d69befef8b912a3781478836db9a75
+# adapted from https://gist.github.com/marcusvolz/84d69befef8b912a3781478836db9a75 
 # Plot activity calendar
 
 # Required packages
@@ -22,11 +22,11 @@ source(here::here("code", "ggplot_calendar_heatmap_KLS.R"))
 # data <- process_data(<gpx file path>)
 data <- read_csv(here::here("data", "processed", "activities.csv")) %>%
     select(start_date, elapsed_time_hrs, year) %>%
-    drop_na()
+    rename(Year = year)
 
 # Create plot
-cal_plot <- ggplot_calendar_heatmap_KLS(data, "start_date", "elapsed_time_hrs", fill_label= 'hrs')
-#print(cal_plot)
+cal_plot <- ggplot_calendar_heatmap_KLS(data, "start_date", "elapsed_time_hrs")
+print(cal_plot)
 
 # Save plot
 ggsave(here::here("figures", "calendar.png"), cal_plot, width = 30, height = 30, units = "cm", dpi = 300)
