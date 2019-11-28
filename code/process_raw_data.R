@@ -21,17 +21,19 @@ if (exists("snakemake")) {
 act_data_raw <- readr::read_csv(filename_csv_raw)
 act_data <- act_data_raw %>% 
     mutate(start_date = start_date %>% lubridate::ymd_hms(),
-                                    start_date_local = start_date_local %>% lubridate::ymd_hms(),
-                                    elapsed_time_min = round((elapsed_time / 60), 1),
-                                    elapsed_time_hrs = round((elapsed_time / 60 / 60), 1),
-                                    moving_time_min = round((moving_time / 60), 1),
-                                    moving_time_hrs = round((moving_time / 60 / 60), 1),
-                                    type = fct_reorder(type, elapsed_time, .fun = sum, .desc=TRUE),
-                                    mday = start_date %>% lubridate::ymd_hms() %>% lubridate::mday(),
-                                    week = start_date %>% lubridate::ymd_hms() %>% lubridate::floor_date('week'),
-                                    year = start_date %>% lubridate::year(),
-                                    month = start_date %>% lubridate::month() %>% as.integer()
-                                    ) %>%
+           start_date_local = start_date_local %>% lubridate::ymd_hms(),
+           elapsed_time_min = round((elapsed_time / 60), 1),
+           elapsed_time_hrs = round((elapsed_time / 60 / 60), 1),
+           moving_time_min = round((moving_time / 60), 1),
+           moving_time_hrs = round((moving_time / 60 / 60), 1),
+           type = fct_reorder(type, elapsed_time, .fun = sum, .desc=TRUE),
+           wday = start_date %>% lubridate::ymd_hms() %>% lubridate::wday() %>% as.integer(),
+           mday = start_date %>% lubridate::ymd_hms() %>% lubridate::mday(),
+           yday = start_date %>% lubridate::yday() %>% as.integer(),
+           week = start_date %>% lubridate::ymd_hms() %>% lubridate::floor_date('week'),
+           year = start_date %>% lubridate::year(),
+           month = start_date %>% lubridate::month() %>% as.integer()
+           ) %>%
     arrange(start_date) %>%
     group_by(type) %>%
     mutate(elapsed_hrs_cum_type = cumsum(elapsed_time))
