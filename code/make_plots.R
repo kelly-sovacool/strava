@@ -43,12 +43,14 @@ filter_year <- function(data, date_col, year_str) {
                                          lubridate::ymd(paste0(year_str, "-12-31")))
     data %>% filter(UQ(as.symbol(date_col)) %within% year_interval)
 }
+
+#default_aspect_ratio <- 4/3
 default_height <- 6
-get_width <- function(height=6, aspect_ratio=4/3) {
+get_width <- function(height=6, aspect_ratio=3/2) {
     height * aspect_ratio
 }
 default_width <- get_width()
-get_height <- function(width=8, aspect_ratio=4/3) {
+get_height <- function(width=8, aspect_ratio=3/2) {
     width / aspect_ratio
 }
 default_alpha <- 0.9
