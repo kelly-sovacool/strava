@@ -11,6 +11,7 @@ library(scales)
 library(tidyr)
 source(here::here("code", "read_processed_data.R"))
 
+# TODO: DRY & modularize the code 
 if (exists("snakemake")) {
     filename_csv <- snakemake@input[["csv"]]
     filename_bar_all_week <- snakemake@output[["bar_plot_week"]]
@@ -219,7 +220,7 @@ box_cow_weekday_dist <- cowplot::plot_grid(plotlist = plots)
 box_plot_weekday_dist_wrap <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance_mi)) +
     geom_boxplot(aes(fill=type)) +    
     scale_fill_manual("type", values=colors) +
-    facet_wrap(~type, nrow=1)+# scale="free_y") +
+    facet_wrap(~type, nrow=1, scale="free_y") +
     ylab("Distance (mi)") +
     theme_classic()
 ggsave(box_plot_weekday_dist_wrap, 

@@ -23,28 +23,29 @@ Be sure not to commit your token to GitHub!
 
 ## Workflow
 
-### Run everything
+Run everything:
 ```
 snakemake
 ```
 See the [snakemake documentation](https://snakemake.readthedocs.io/en/stable/) for more on how to use snakemake.
 
-### View the workflow DAG
+View the workflow DAG:
 ```
 snakemake -n --forceall --dag | dot -Tsvg > figures/dag.svg
 ```
 
 ![](figures/dag.svg)
 
-## Plots
+The [R Markdown report](code/report.Rmd) is rendered to the [docs](docs) directory:
+view the rendered html [here](sovacool.dev/strava/report.html).
+
+## Example plots
 
 See all plots in the [figures](figures/) directory
 
 ![](figures/bar_all_month.png)
 
 ![](figures/jitter_dist_year.png)
-
-![](figures/jitter_type_dist.png)
 
 ![](figures/jitter_type_time.png)
 
