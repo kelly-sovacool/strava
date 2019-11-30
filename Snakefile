@@ -42,7 +42,9 @@ rule plot:
         bar_plot_week="figures/bar_all_week.png",
         bar_plot_month="figures/bar_all_month.png",
         bar_plot_day="figures/bar_all_day.png",
-        bar_years=expand("figures/bar_{year}.png", year=years)
+        bar_years=expand("figures/bar_{year}.png", year=years),
+        box_dist="figures/box_weekday_dist_wrap.png",
+        box_time="figures/box_weekday_time.png"
     params:
         years=years
     script:

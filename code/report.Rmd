@@ -3,37 +3,77 @@ title: "Activity Report"
 author: "Kelly Sovacool"
 date: "`r format(Sys.Date(), '%Y-%m-%d')`"
 output:
-    html_document: default
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
+library(here)
 library(knitr)
 library(rmarkdown)
-knitr::opts_chunk$set(echo = FALSE)
+source(here::here("code", "read_processed_data.R"))
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 ```
 
-## Plot activity duration by month
+## Summary table
+
+```{r}
+act_data <- read_data(here::here("data", "processed", "activities.csv"))
+table <- act_data %>% 
+    group_by(year, type) %>% 
+    summarize(n=n(), 
+              sum_dist_mi=round(sum(distance_mi),1), 
+              med_dist_mi=round(median(distance_mi), 1),
+              sum_time_hrs=sum(elapsed_time_hrs),
+              med_time_hrs=median(elapsed_time_hrs))
+knitr::kable(table)
+median_dist_mi <- act_data %>% 
+    group_by(type, wday) %>%
+    summarize(median_dist_mi = median(distance_mi))
+```
+
+## Plot activity duration
+
+```{r}
+knitr::include_graphics(here::here("figures", "jitter_type_time.png"))
+```
+
+### By month
 
 ```{r}
 knitr::include_graphics(here::here("figures", "bar_all_month.png"))
 ```
 
-## Plot activity duration by week
+### By week
 
 ```{r}
 knitr::include_graphics(here::here("figures", "bar_all_week.png"))
 ```
 
-### Split by year
+### By day
 
 ```{r}
-knitr::include_graphics(here::here("figures", "bar_2017.png"))
-knitr::include_graphics(here::here("figures", "bar_2018.png"))
-knitr::include_graphics(here::here("figures", "bar_2019.png"))
+knitr::include_graphics(here::here("figures", "bar_all_day.png"))
 ```
 
-## Plot cumulative duration
+## Day of the week
+
+### Elapsed time
+```{r}
+knitr::include_graphics(here::here("figures", "box_weekday_time.png"))
+knitr::include_graphics(here::here('figures', "jitter_weekday_time_grid.png"))
+```
+
+### Distance
+```{r}
+knitr::include_graphics(here::here("figures", "box_weekday_dist_wrap.png"))
+knitr::include_graphics(here::here('figures', "jitter_weekday_dist_grid.png"))
+```
+
+## Cumulative
 
 ```{r}
-knitr::include_graphics(here::here("figures", "line_all.png"))
+knitr::include_graphics(here::here("figures", "line_time.png"))
+knitr::include_graphics(here::here("figures", "line_dist.png"))
 ```

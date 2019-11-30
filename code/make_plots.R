@@ -9,6 +9,7 @@ library(RColorBrewer)
 library(readr)
 library(scales)
 library(tidyr)
+source(here::here("code", "read_processed_data.R"))
 
 if (exists("snakemake")) {
     filename_csv <- snakemake@input[["csv"]]
@@ -53,12 +54,9 @@ default_width <- get_width()
 get_height <- function(width=8, aspect_ratio=4/3) {
     width / aspect_ratio
 }
-default_alpha <- 0.9
+default_alpha <- 0.7
 
-act_data <- readr::read_csv(filename_csv) %>%
-    mutate(type = fct_reorder(type, elapsed_time, .fun = sum, .desc=TRUE),
-           wday = fct_relevel(fct_recode(as.factor(wday), "M"="2", "T"="3", "W"="4", "H"="5", "F"="6", "Sa"="7", "Su"="1"), "M", "T", "W", "H", "F", "Sa", "Su") 
-           )
+act_data <- read_data(filename_csv)
 
 colors <- set_colors(act_data)
 
@@ -115,30 +113,42 @@ ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=
 # jitterplot type x time
 jitter_plot_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
     ggplot(aes(type, elapsed_time_hrs)) +
-    geom_jitter(aes(color=type)) +#, alpha=default_alpha)) +
+    stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
+                 geom = "crossbar", width = 0.9, color="gray35") +
+    geom_jitter(aes(color=type), alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
-    scale_y_continuous(breaks=1:7) +
+    scale_y_continuous(breaks=0:7) +
     theme_classic()
 ggsave(jitter_plot_time, filename = here::here("figures", "jitter_type_time.png"), height = 6, width = get_width(6))
 
-# boxplot weekday x time
-box_plot_weekday_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
-    ggplot(aes(wday, elapsed_time_hrs, fill=type)) +
-    geom_boxplot(aes(fill=type)) +
-    scale_fill_manual("type", values=colors) +
-    scale_y_continuous(breaks=1:7) +
-    facet_wrap(~type, nrow = 1) +
-    theme_classic()
-ggsave(box_plot_weekday_time, filename = here::here('figures', "box_weekday_time.png"), width=8, height=get_height(8))
-
+median_dist_mi <- act_data %>% 
+    group_by(type) %>%#, wday) %>%
+    summarize(median_dist_mi = median(distance_mi))
 # jitter weekday x distance
-jitter_plot_weekday_dist_grid <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance)) +
-    geom_jitter(aes(color=type)) +#, alpha=default_alpha)) +
+jitter_plot_weekday_dist_grid <- act_data %>% 
+    filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing")))%>%
+    ggplot(aes(wday, distance_mi)) +
+    stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
+                 geom = "crossbar", width = 0.9, color="gray35") +
+    geom_jitter(aes(color=type), alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
     facet_grid(type~wday, scale="free") +
-    ylab("Distance (km)") +
+    ylab("Distance (mi)") +
     theme_classic()
 ggsave(jitter_plot_weekday_dist_grid, filename = here::here('figures', "jitter_weekday_dist_grid.png"), width=10, height=get_height(10))
+
+# jitter weekday x time
+jitter_plot_weekday_time_grid <- act_data %>% 
+    filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing")))%>%
+    ggplot(aes(wday, elapsed_time_hrs)) +
+    stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
+                 geom = "crossbar", width = 0.9, color="gray35") +
+    geom_jitter(aes(color=type), alpha=default_alpha) +
+    scale_color_manual("type", values=colors) +
+    facet_grid(type~wday, scale="free") +
+    ylab("Distance (mi)") +
+    theme_classic()
+ggsave(jitter_plot_weekday_time_grid, filename = here::here('figures', "jitter_weekday_time_grid.png"), width=10, height=get_height(10))
 
 # boxplot weekday x distance
 # TODO: use cowplot for better control
@@ -155,21 +165,35 @@ plot_box <- function(data, x_str, y_str, fill_str) {
         theme(legend.position = "none")
 }
 
+# boxplot weekday x time
+box_plot_weekday_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
+    ggplot(aes(wday, elapsed_time_hrs, fill=type)) +
+    geom_boxplot(aes(fill=type)) +
+    scale_fill_manual("type", values=colors) +
+    scale_y_continuous(breaks=1:7) +
+    facet_wrap(~type, nrow = 1) +
+    theme_classic()
+ggsave(box_plot_weekday_time, filename = here::here('figures', "box_weekday_time.png"), width=8, height=get_height(8))
+
+#### try cowplot
 plots = list()
-plots[["Ride"]] <- plot_box(filter_type(act_data, "Ride"), "wday", "distance", "type")
-plots[["Run"]]  <- plot_box(filter_type(act_data, "Run"), "wday", "distance", "type") + ylim(0, 25)
-plots[["Rowing"]] <- plot_box(filter_type(act_data, "Rowing"), "wday", "distance", "type") + ylim(0,6)
-plots[["Swim"]] <- plot_box(filter_type(act_data, "Swim"), "wday", "distance", "type") + ylim(0, 1)
+plots[["Ride"]] <- plot_box(filter_type(act_data, "Ride"), "wday", "distance_mi", "type")
+plots[["Run"]]  <- plot_box(filter_type(act_data, "Run"), "wday", "distance_mi", "type") + ylim(0, 25)
+plots[["Rowing"]] <- plot_box(filter_type(act_data, "Rowing"), "wday", "distance_mi", "type") + ylim(0,6)
+plots[["Swim"]] <- plot_box(filter_type(act_data, "Swim"), "wday", "distance_mi", "type") + ylim(0, 1)
 box_cow_weekday_dist <- cowplot::plot_grid(plotlist = plots)
 #####
-box_plot_weekday_dist_wrap <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance)) +
+box_plot_weekday_dist_wrap <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance_mi)) +
     geom_boxplot(aes(fill=type)) +    
     scale_fill_manual("type", values=colors) +
-    facet_wrap(~type, scale="free_y", ncol = 1) +
-    ylab("Distance (km)") +
+    facet_wrap(~type, nrow=1)+# scale="free_y") +
+    ylab("Distance (mi)") +
     theme_classic()
-ggsave(box_plot_weekday_dist_wrap, filename = here::here('figures', "box_weekday_dist_wrap.png"), width=10, height=get_height(10))
+ggsave(box_plot_weekday_dist_wrap, 
+       filename = here::here('figures', "box_weekday_dist_wrap.png"), 
+       width=8, height=get_height(8))
 ######
+
 # cumulative activity time
 line_plot_time <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
     geom_line() +
@@ -181,6 +205,7 @@ line_plot_time <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, 
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Cumulative Activity Time (hrs)")
 ggsave(line_plot_time, filename=here::here("figures", "line_time.png"), width = default_width, height = default_height)
+
 # cumulative activity distance
 line_plot_dist <- act_data %>% ggplot(aes(x=start_date, y=elapsed_dist_cum_type, color=type)) +
     geom_line() +
@@ -190,5 +215,5 @@ line_plot_dist <- act_data %>% ggplot(aes(x=start_date, y=elapsed_dist_cum_type,
     scale_y_continuous(breaks=pretty_breaks()) +
     theme_classic() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    ggtitle("Cumulative Activity Distance (km)")
+    ggtitle("Cumulative Activity Distance (mi)")
 ggsave(line_plot_dist, filename=here::here("figures", "line_dist.png"), width = default_width, height = default_height)

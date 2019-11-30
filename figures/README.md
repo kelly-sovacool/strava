@@ -12,8 +12,6 @@
 
 ![](bar_all_week.png)
 
-![](box_weekday_dist.png)
-
 ![](box_weekday_dist_wrap.png)
 
 ![](box_weekday_time.png)
@@ -24,7 +22,7 @@
 
 ![](jitter_weekday_dist_grid.png)
 
-![](line_all.png)
+![](jitter_weekday_time_grid.png)
 
 ![](line_dist.png)
 

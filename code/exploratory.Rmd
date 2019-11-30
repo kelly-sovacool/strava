@@ -50,6 +50,10 @@ act_data <- act_data_raw %>% mutate(start_date = start_date %>% lubridate::ymd_h
 
 readr::write_csv(act_data, here::here("data", "processed", "activities.csv"))
 ```
+
+```{r summary}
+act_data %>% group_by(year, type) %>% summarize(n=n(), sum_dist_km=sum(distance), sum_time_hrs=sum(elapsed_time_hrs))
+```
 ```{r globals}
 set_colors <- function() {
     palette = RColorBrewer::brewer.pal(n = act_data$type %>% unique() %>% length(), name = "Paired")
