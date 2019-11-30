@@ -46,11 +46,11 @@ filter_year <- function(data, date_col, year_str) {
 
 #default_aspect_ratio <- 4/3
 default_height <- 6
-get_width <- function(height=6, aspect_ratio=3/2) {
+get_width <- function(height=6, aspect_ratio=4/3) {
     height * aspect_ratio
 }
 default_width <- get_width()
-get_height <- function(width=8, aspect_ratio=3/2) {
+get_height <- function(width=8, aspect_ratio=4/3) {
     width / aspect_ratio
 }
 default_alpha <- 0.9
@@ -87,7 +87,7 @@ for (year in years) {
     bar_plot_year <- plot_bar_week(filter_year(act_data, "start_date", year)) +
         ggtitle(paste0(year, " Activites"))
     ggsave(bar_plot_year, filename = here::here("figures", paste0("bar_", year,".png")),
-           width = default_height, height = default_height)
+           width = 6, height = get_height(6))
 }
 
 # binned by month
