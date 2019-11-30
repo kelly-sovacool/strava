@@ -40,10 +40,10 @@ snakemake -n --forceall --dag | dot -Tsvg > figures/dag.svg
 
 See all plots in the [figures](figures/) directory
 
-![](figures/bar_2019.png)
-
 ![](figures/bar_all_month.png)
 
 ![](figures/jitter_type_time.png)
+
+![](figures/jitter_type_dist.png)
 
 ![](figures/line_time.png)

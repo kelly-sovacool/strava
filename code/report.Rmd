@@ -57,15 +57,20 @@ knitr::include_graphics(here::here("figures", "bar_all_week.png"))
 knitr::include_graphics(here::here("figures", "bar_all_day.png"))
 ```
 
-## Day of the week
+### Day of the week
 
-### Elapsed time
 ```{r}
 knitr::include_graphics(here::here("figures", "box_weekday_time.png"))
 knitr::include_graphics(here::here('figures', "jitter_weekday_time_grid.png"))
 ```
 
-### Distance
+## Plot Activity Distance
+
+```{r}
+knitr::include_graphics(here::here("figures", "jitter_type_time.png"))
+```
+
+### Day of the week
 ```{r}
 knitr::include_graphics(here::here("figures", "box_weekday_dist_wrap.png"))
 knitr::include_graphics(here::here('figures', "jitter_weekday_dist_grid.png"))

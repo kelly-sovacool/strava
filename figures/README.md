@@ -18,6 +18,8 @@
 
 ![](dag.svg)
 
+![](jitter_type_dist.png)
+
 ![](jitter_type_time.png)
 
 ![](jitter_weekday_dist_grid.png)
