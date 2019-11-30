@@ -33,7 +33,7 @@ median_dist_mi <- act_data %>%
     summarize(median_dist_mi = median(distance_mi))
 ```
 
-## Plot activity duration
+## Duration
 
 ```{r}
 knitr::include_graphics(here::here("figures", "jitter_type_time.png"))
@@ -64,10 +64,10 @@ knitr::include_graphics(here::here("figures", "box_weekday_time.png"))
 knitr::include_graphics(here::here('figures', "jitter_weekday_time_grid.png"))
 ```
 
-## Plot Activity Distance
+## Distance
 
 ```{r}
-knitr::include_graphics(here::here("figures", "jitter_type_time.png"))
+knitr::include_graphics(here::here("figures", "jitter_type_dist.png"))
 ```
 
 ### Day of the week
