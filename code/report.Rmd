@@ -9,14 +9,17 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
 library(here)
 library(knitr)
 library(rmarkdown)
+library(scales)
 source(here::here("code", "read_processed_data.R"))
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 ```
 
-## Summary table
+## Summary
 
 ```{r}
 act_data <- read_data(here::here("data", "processed", "activities.csv"))
@@ -28,33 +31,82 @@ table <- act_data %>%
               sum_time_hrs=sum(elapsed_time_hrs),
               med_time_hrs=median(elapsed_time_hrs))
 knitr::kable(table)
-median_dist_mi <- act_data %>% 
-    group_by(type, wday) %>%
-    summarize(median_dist_mi = median(distance_mi))
+set_colors <- function(data) {
+    palette = RColorBrewer::brewer.pal(n = 8, name = "Paired")
+    colors = list()
+    colors[["Ride"]] <- palette[[4]]
+    colors[["Run"]] <- palette[[8]]
+    colors[["RockClimbing"]] <- palette[[3]]
+    colors[["Rowing"]] <- palette[[1]]
+    colors[["Swim"]] <- palette[[2]]
+    colors[["Hike"]] <- palette[[6]]
+    colors[["Walk"]] <- palette[[5]]
+    colors[["Elliptical"]] <- palette[[7]]
+    colors
+}
+colors <- set_colors(data)
 ```
 
-## Duration
+## Progress over time
+
+### Distance
 
 ```{r}
-knitr::include_graphics(here::here("figures", "jitter_type_time.png"))
+# sum
+table %>% 
+    filter(type %in% c("Ride", "Run")) %>%
+    ggplot(aes(year, sum_dist_mi, fill=type, label=sum_dist_mi)) +
+    geom_col() +
+    geom_text(vjust=-0.3) +
+    scale_fill_manual("type", values=colors) +
+    facet_wrap(~type, nrow=1) + 
+    scale_y_continuous(breaks=pretty_breaks()) +
+    ggtitle("Total Distance (mi) by year") +
+    theme_classic()
+# jitter
+knitr::include_graphics(here::here("figures", "jitter_dist_year.png"))
 ```
 
-### By month
+### Duration
+```{r}
+# sum
+table %>% 
+    filter(type %in% c("Ride", "Run")) %>%
+    ggplot(aes(year, sum_time_hrs, fill=type, label=sum_time_hrs)) +
+    geom_col() +
+    geom_text(vjust=-0.3) +
+    scale_fill_manual("type", values=colors) +
+    facet_wrap(~type, nrow=1) + 
+    scale_y_continuous(breaks=pretty_breaks()) +
+    ggtitle("Total Time (hrs) by year") +
+    theme_classic()
+# jitter
+knitr::include_graphics(here::here("figures", "jitter_time_year.png"))
+```
+
+#### By month
 
 ```{r}
 knitr::include_graphics(here::here("figures", "bar_all_month.png"))
 ```
 
-### By week
+#### By week
 
 ```{r}
 knitr::include_graphics(here::here("figures", "bar_all_week.png"))
 ```
 
-### By day
+#### By day
 
 ```{r}
 knitr::include_graphics(here::here("figures", "bar_all_day.png"))
+```
+
+
+## Duration by activity
+
+```{r}
+knitr::include_graphics(here::here("figures", "jitter_type_time.png"))
 ```
 
 ### Day of the week
@@ -64,7 +116,7 @@ knitr::include_graphics(here::here("figures", "box_weekday_time.png"))
 knitr::include_graphics(here::here('figures', "jitter_weekday_time_grid.png"))
 ```
 
-## Distance
+## Distance by activity
 
 ```{r}
 knitr::include_graphics(here::here("figures", "jitter_type_dist.png"))

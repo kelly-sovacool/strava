@@ -18,6 +18,10 @@
 
 ![](dag.svg)
 
+![](jitter_dist_year.png)
+
+![](jitter_time_year.png)
+
 ![](jitter_type_dist.png)
 
 ![](jitter_type_time.png)

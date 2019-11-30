@@ -65,7 +65,7 @@ colors <- set_colors(act_data)
 # activities binned by week 
 plot_bar_week <- function(data) {
     colors <- set_colors(data)
-    plot <- data %>% ggplot2::ggplot(aes(x=week, y=elapsed_time_hrs, fill=type)) +
+    plot <- data %>% ggplot2::ggplot(aes(x=week, y=moving_time_hrs, fill=type)) +
         geom_col(position="stack") +
         scale_fill_manual("type", values=colors) +
         ylim(0, 25) +
@@ -90,7 +90,7 @@ for (year in years) {
 
 # binned by month
 plot_bar_facet <- function(data, x_col_str, scale = "fixed") {
-    ggplot2::ggplot(data, aes_string(x=x_col_str, y="elapsed_time_hrs", fill="type")) +
+    ggplot2::ggplot(data, aes_string(x=x_col_str, y="moving_time_hrs", fill="type")) +
         geom_col(position="stack") +
         scale_fill_manual("type", values=colors) +
         facet_wrap(~year, nrow = length(data$year %>% unique()), scale=scale) +
@@ -110,9 +110,9 @@ bar_plot_day <- plot_bar_facet(act_data, "yday") +
     scale_x_continuous(breaks = c(1,31,59,90,120,151,181,212,243,273,304,334,365), labels=c("", "31 Jan", "28 Feb", "31 Mar", "30 Apr", "31 May", "30 Jun", "31 Jul", "31 Aug", "30 Sep", "31 Oct", "30 Nov", "31 Dec"))
 ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=7)
 
-# jitterplot type x time
+# jitter type x time
 jitter_plot_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
-    ggplot(aes(type, elapsed_time_hrs)) +
+    ggplot(aes(type, moving_time_hrs)) +
     stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
                  geom = "crossbar", width = 0.9, color="gray35") +
     geom_jitter(aes(color=type), alpha=default_alpha) +
@@ -121,7 +121,32 @@ jitter_plot_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptica
     theme_classic()
 ggsave(jitter_plot_time, filename = here::here("figures", "jitter_type_time.png"), height = 6, width = get_width(6))
 
-# jitterplot type x dist
+# jitter time x year, facet by type
+jitter_plot_time_year <- act_data %>% filter(type %in% c("Ride", "Run")) %>% 
+    ggplot(aes(year, moving_time_hrs)) +
+    stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
+                 geom = "crossbar", width = 0.9, color="gray35") +
+    geom_jitter(aes(color=type), alpha=default_alpha) +
+    facet_wrap(~type, nrow=1, scale="free") +
+    scale_color_manual("type", values=colors) +
+    scale_y_continuous(breaks=0:7) +
+    theme_classic()
+ggsave(jitter_plot_time_year, filename = here::here("figures", "jitter_time_year.png"), height = 5, width = get_width(5))
+
+# jitter dist x year, facet by type
+jitter_plot_dist_year <- act_data %>% filter(type %in% c("Ride", "Run")) %>% 
+    ggplot(aes(year, distance_mi)) +
+    stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
+                 geom = "crossbar", width = 0.9, color="gray35") +
+    geom_jitter(aes(color=type), alpha=default_alpha) +
+    facet_wrap(~type, nrow=1, scale="free") +
+    scale_color_manual("type", values=colors) +
+    scale_y_continuous(breaks = c(0, 5, seq(10, 100, by = 10))) +
+    theme_classic()
+ggsave(jitter_plot_dist_year, filename = here::here("figures", "jitter_dist_year.png"), height = 5, width = get_width(5))
+
+
+# jitter type x dist
 jitter_plot_dist <- act_data %>% filter(!(type %in% c("RockClimbing", "Hike", "Walk", "Elliptical"))) %>% 
     ggplot(aes(type, distance_mi)) +
     stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
@@ -148,13 +173,13 @@ ggsave(jitter_plot_weekday_dist_grid, filename = here::here('figures', "jitter_w
 # jitter weekday x time
 jitter_plot_weekday_time_grid <- act_data %>% 
     filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing")))%>%
-    ggplot(aes(wday, elapsed_time_hrs)) +
+    ggplot(aes(wday, moving_time_hrs)) +
     stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
                  geom = "crossbar", width = 0.9, color="gray35") +
     geom_jitter(aes(color=type), alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
     facet_grid(type~wday, scale="free") +
-    ylab("Distance (mi)") +
+    ylab("Moving time (hrs)") +
     theme_classic()
 ggsave(jitter_plot_weekday_time_grid, filename = here::here('figures', "jitter_weekday_time_grid.png"), width=10, height=get_height(10))
 
@@ -175,7 +200,7 @@ plot_box <- function(data, x_str, y_str, fill_str) {
 
 # boxplot weekday x time
 box_plot_weekday_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
-    ggplot(aes(wday, elapsed_time_hrs, fill=type)) +
+    ggplot(aes(wday, moving_time_hrs, fill=type)) +
     geom_boxplot(aes(fill=type)) +
     scale_fill_manual("type", values=colors) +
     scale_y_continuous(breaks=1:7) +

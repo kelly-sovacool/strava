@@ -42,8 +42,10 @@ See all plots in the [figures](figures/) directory
 
 ![](figures/bar_all_month.png)
 
-![](figures/jitter_type_time.png)
+![](figures/jitter_dist_year.png)
 
 ![](figures/jitter_type_dist.png)
+
+![](figures/jitter_type_time.png)
 
 ![](figures/line_time.png)
