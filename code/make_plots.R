@@ -172,7 +172,7 @@ ggsave(jitter_plot_weekday_dist_grid, filename = here::here('figures', "jitter_w
 
 # jitter weekday x time
 jitter_plot_weekday_time_grid <- act_data %>% 
-    filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing")))%>%
+    filter(!(type %in% c("Hike", "Walk", "Elliptical")))%>%
     ggplot(aes(wday, moving_time_hrs)) +
     stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
                  geom = "crossbar", width = 0.9, color="gray35") +
