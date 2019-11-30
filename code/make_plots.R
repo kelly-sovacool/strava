@@ -119,7 +119,7 @@ jitter_plot_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptica
     scale_color_manual("type", values=colors) +
     scale_y_continuous(breaks=1:7) +
     theme_classic()
-ggsave(jitter_plot_time, filename = here::here("figures", "jitter_type_time.png"), height = 7, width = get_width(7))
+ggsave(jitter_plot_time, filename = here::here("figures", "jitter_type_time.png"), height = 6, width = get_width(6))
 
 # boxplot weekday x time
 box_plot_weekday_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
@@ -129,7 +129,7 @@ box_plot_weekday_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elli
     scale_y_continuous(breaks=1:7) +
     facet_wrap(~type, nrow = 1) +
     theme_classic()
-ggsave(box_plot_weekday_time, filename = here::here('figures', "box_weekday_time.png"), width=10, height=get_height(10))
+ggsave(box_plot_weekday_time, filename = here::here('figures', "box_weekday_time.png"), width=8, height=get_height(8))
 
 # jitter weekday x distance
 jitter_plot_weekday_dist_grid <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance)) +
