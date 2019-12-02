@@ -26,14 +26,6 @@ knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 
 ```{r}
 act_data <- read_data(here::here("data", "processed", "activities.csv"))
-table <- act_data %>%
-    group_by(year, type) %>%
-    summarize(n=n(),
-              sum_dist_mi=round(sum(distance_mi),1),
-              med_dist_mi=round(median(distance_mi), 1),
-              sum_time_hrs=sum(elapsed_time_hrs),
-              med_time_hrs=median(elapsed_time_hrs))
-knitr::kable(table)
 set_colors <- function(data) {
     palette = RColorBrewer::brewer.pal(n = 8, name = "Paired")
     colors = list()
@@ -47,7 +39,15 @@ set_colors <- function(data) {
     colors[["Elliptical"]] <- palette[[7]]
     colors
 }
-colors <- set_colors(data)
+colors <- set_colors(act_data)
+table <- act_data %>%
+    group_by(year, type) %>%
+    summarize(n=n(),
+              sum_dist_mi=round(sum(distance_mi),1),
+              med_dist_mi=round(median(distance_mi), 1),
+              sum_time_hrs=sum(elapsed_time_hrs),
+              med_time_hrs=median(elapsed_time_hrs))
+knitr::kable(table)
 ```
 
 ## Progress over time
@@ -59,8 +59,8 @@ colors <- set_colors(data)
 table %>%
     filter(type %in% c("Ride", "Run")) %>%
     ggplot(aes(year, sum_dist_mi, fill=type, label=sum_dist_mi)) +
-    geom_col() +
-    geom_text(vjust=-0.3) +
+    geom_col(position="dodge") +
+    geom_text(vjust=-0.3, position = position_dodge(width=1)) +
     scale_fill_manual("type", values=colors) +
     facet_wrap(~type, nrow=1) +
     scale_y_continuous(breaks=pretty_breaks()) +
@@ -76,8 +76,8 @@ knitr::include_graphics(here::here("figures", "jitter_dist_year.png"))
 table %>%
     filter(type %in% c("Ride", "Run")) %>%
     ggplot(aes(year, sum_time_hrs, fill=type, label=sum_time_hrs)) +
-    geom_col() +
-    geom_text(vjust=-0.3) +
+    geom_col(position="dodge") +
+    geom_text(vjust=-0.3, position = position_dodge(width=1)) +
     scale_fill_manual("type", values=colors) +
     facet_wrap(~type, nrow=1) +
     scale_y_continuous(breaks=pretty_breaks()) +
