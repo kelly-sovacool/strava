@@ -122,7 +122,7 @@ knitr::include_graphics(here::here('figures', "jitter_weekday_time_grid.png"))
 ## Distance by activity
 
 ```{r}
-knitr::include_graphics(here::here("figures", "jitter_type_dist.png"))
+knitr::include_graphics(here::here("figures", "jitter_type_dist_log2.png"))
 ```
 
 ### Day of the week

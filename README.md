@@ -45,6 +45,8 @@ See all plots in the [figures](figures/) directory
 
 ![](figures/bar_all_month.png)
 
+![](figures/jitter_type_dist_log2.png)
+
 ![](figures/box_weekday_dist_wrap.png)
 
 ![](figures/jitter_type_time.png)

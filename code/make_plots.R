@@ -154,9 +154,22 @@ jitter_plot_dist <- act_data %>% filter(!(type %in% c("RockClimbing", "Hike", "W
                  geom = "crossbar", width = 0.9, color="gray35") +
     geom_jitter(aes(color=type), alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
-    scale_y_continuous(breaks = c(0, 5, seq(10, 100, by = 10))) +
+    scale_y_continuous(trans="log2", breaks=scale::breaks_log(base=2))+#breaks = c(0, 5, seq(10, 100, by = 10))) +
     theme_classic()
 ggsave(jitter_plot_dist, filename = here::here("figures", "jitter_type_dist.png"), height = 6, width = get_width(6))
+
+# log2-transform for better distance comparison
+jitter_plot_dist_log2 <- act_data %>% 
+    filter(type %in% c("Ride", "Run", "Rowing", "Swim")) %>% 
+    filter(distance_mi > 0) %>% 
+    ggplot(aes(type, distance_mi)) +
+    stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
+                 geom = "crossbar", width = 0.9, color="gray35") +
+    geom_jitter(aes(color=type), alpha=default_alpha) +
+    scale_color_manual("type", values=colors) +
+    scale_y_continuous(trans="log2", limits=c(0.25, 105), breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
+    theme_classic()
+ggsave(jitter_plot_dist_log2, filename = here::here("figures", "jitter_type_dist_log2.png"), height = 6, width = get_width(6))
 
 # jitter weekday x distance
 jitter_plot_weekday_dist_grid <- act_data %>% 
