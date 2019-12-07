@@ -119,6 +119,7 @@ jitter_plot_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptica
     geom_jitter(aes(color=type), alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
     scale_y_continuous(breaks=0:7) +
+    ggtitle("Strava Activities") +
     theme_classic()
 ggsave(jitter_plot_time, filename = here::here("figures", "jitter_type_time.png"), height = 6, width = get_width(6))
 
@@ -168,6 +169,7 @@ jitter_plot_dist_log2 <- act_data %>%
     geom_jitter(aes(color=type), alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
     scale_y_continuous(trans="log2", limits=c(0.25, 105), breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
+    ggtitle("Strava Activities") +
     theme_classic()
 ggsave(jitter_plot_dist_log2, filename = here::here("figures", "jitter_type_dist_log2.png"), height = 6, width = get_width(6))
 
