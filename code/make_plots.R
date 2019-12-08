@@ -155,7 +155,7 @@ jitter_plot_dist <- act_data %>% filter(!(type %in% c("RockClimbing", "Hike", "W
                  geom = "crossbar", width = 0.9, color="gray35") +
     geom_jitter(aes(color=type), alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
-    scale_y_continuous(trans="log2", breaks=scale::breaks_log(base=2))+#breaks = c(0, 5, seq(10, 100, by = 10))) +
+    scale_y_continuous(trans="log2", breaks=scales::breaks_log(base=2))+#breaks = c(0, 5, seq(10, 100, by = 10))) +
     theme_classic()
 ggsave(jitter_plot_dist, filename = here::here("figures", "jitter_type_dist.png"), height = 6, width = get_width(6))
 
