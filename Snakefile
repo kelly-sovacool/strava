@@ -3,14 +3,15 @@ import pathlib
 
 today = datetime.date.today()
 years = range(2017, today.year+1)
-filename_raw_csv = "data/raw/activities.csv"
+filename_raw_csv = 'data/raw/activities.csv'
 csv_path = pathlib.Path(filename_raw_csv)
-
+filename_download_code = 'code/download.R'
+download_code_path = pathlib.Path(filename_download_code)
 # forcerun download rule if the raw data file was last modified before today
 if csv_path.exists():
     timestamp = datetime.date.fromtimestamp(csv_path.stat().st_mtime)
     if today > timestamp:
-        csv_path.touch(exist_ok=True)
+        download_code_path.touch(exist_ok=True)
 
 rule targets:
     input:
@@ -19,7 +20,7 @@ rule targets:
 
 rule download:
     input:
-        R="code/download.R"
+        R=filename_download_code
     output:
         csv=filename_raw_csv
     script:
