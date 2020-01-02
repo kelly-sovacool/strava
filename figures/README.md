@@ -6,11 +6,17 @@
 
 ![](bar_2019.png)
 
+![](bar_2020.png)
+
 ![](bar_all_day.png)
 
 ![](bar_all_month.png)
 
 ![](bar_all_week.png)
+
+![](bar_sum_dist.png)
+
+![](bar_sum_hrs.png)
 
 ![](box_weekday_dist_wrap.png)
 
