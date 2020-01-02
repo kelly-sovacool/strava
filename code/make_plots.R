@@ -27,7 +27,7 @@ if (exists("snakemake")) {
 }
 
 set_colors <- function(data) {
-    palette = RColorBrewer::brewer.pal(n = 8, name = "Paired")
+    palette = RColorBrewer::brewer.pal(n = 10, name = "Paired")
     colors = list()
     colors[["Ride"]] <- palette[[4]]
     colors[["Run"]] <- palette[[8]]
@@ -37,7 +37,8 @@ set_colors <- function(data) {
     colors[["Hike"]] <- palette[[6]]
     colors[["Walk"]] <- palette[[5]]
     colors[["Elliptical"]] <- palette[[7]]
-    colors
+    colors[["NordicSki"]] <- palette[[10]]
+    return(colors)
 }
 
 filter_year <- function(data, date_col, year_str) {
@@ -245,7 +246,7 @@ ggsave(box_plot_weekday_dist_wrap,
 # cumulative activity time
 line_plot_time <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
     geom_line() +
-    scale_color_brewer(palette = "Dark2") +
+    scale_color_brewer(palette = "Spectral") +
     #scale_color_manual("type", colors) +  # bug in ggplot?
     scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %Y") +
     scale_y_continuous(breaks=pretty_breaks()) +
@@ -257,7 +258,7 @@ ggsave(line_plot_time, filename=here::here("figures", "line_time.png"), width = 
 # cumulative activity distance
 line_plot_dist <- act_data %>% ggplot(aes(x=start_date, y=elapsed_dist_cum_type, color=type)) +
     geom_line() +
-    scale_color_brewer(palette = "Dark2") +
+    scale_color_brewer(palette = "Spectral") +
     #scale_color_manual("type", colors) +  # bug in ggplot?
     scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %Y") +
     scale_y_continuous(breaks=pretty_breaks()) +
