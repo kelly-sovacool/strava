@@ -38,6 +38,7 @@ set_colors <- function(data) {
     colors[["Walk"]] <- palette[[5]]
     colors[["Elliptical"]] <- palette[[7]]
     colors[["NordicSki"]] <- palette[[10]]
+    colors[["Yoga"]] <- palette[[9]]
     return(colors)
 }
 
