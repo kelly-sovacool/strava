@@ -48,6 +48,20 @@ filter_year <- function(data, date_col, year_str) {
     data %>% filter(UQ(as.symbol(date_col)) %within% year_interval)
 }
 
+filter_dist <- function(data) {
+    types_to_keep <- data %>% 
+        group_by(type) %>% 
+        summarise(total_dist_mi=sum(distance_mi),
+                  n=n()) %>% 
+        filter(n > 5) %>%
+        filter(total_dist_mi > 0) %>% 
+        pull(type)
+    return(
+        data %>%
+            filter(type %in% types_to_keep)
+    )
+}
+
 #default_aspect_ratio <- 4/3
 default_height <- 6
 get_width <- function(height=6, aspect_ratio=4/3) {
@@ -151,7 +165,7 @@ ggsave(jitter_plot_dist_year, filename = here::here("figures", "jitter_dist_year
 
 
 # jitter type x dist
-jitter_plot_dist <- act_data %>% filter(!(type %in% c("RockClimbing", "Hike", "Walk", "Elliptical"))) %>% 
+jitter_plot_dist <- act_data %>% filter_dist() %>% 
     ggplot(aes(type, distance_mi)) +
     stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
                  geom = "crossbar", width = 0.9, color="gray35") +
@@ -162,7 +176,7 @@ ggsave(jitter_plot_dist, filename = here::here("figures", "jitter_type_dist.png"
 
 # log2-transform for better distance comparison
 jitter_plot_dist_log2 <- act_data %>% 
-    filter(type %in% c("Ride", "Run", "Rowing", "Swim")) %>% 
+    filter_dist() %>% 
     filter(distance_mi > 0) %>% 
     ggplot(aes(type, distance_mi)) +
     stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
@@ -176,7 +190,7 @@ ggsave(jitter_plot_dist_log2, filename = here::here("figures", "jitter_type_dist
 
 # jitter weekday x distance
 jitter_plot_weekday_dist_grid <- act_data %>% 
-    filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing")))%>%
+    filter_dist() %>%
     ggplot(aes(wday, distance_mi)) +
     stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
                  geom = "crossbar", width = 0.9, color="gray35") +
@@ -233,7 +247,8 @@ plots[["Rowing"]] <- plot_box(filter_type(act_data, "Rowing"), "wday", "distance
 plots[["Swim"]] <- plot_box(filter_type(act_data, "Swim"), "wday", "distance_mi", "type") + ylim(0, 1)
 box_cow_weekday_dist <- cowplot::plot_grid(plotlist = plots)
 #####
-box_plot_weekday_dist_wrap <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical", "RockClimbing"))) %>% ggplot(aes(wday, distance_mi)) +
+box_plot_weekday_dist_wrap <- act_data %>% filter_dist() %>% 
+    ggplot(aes(wday, distance_mi)) +
     geom_boxplot(aes(fill=type)) +    
     scale_fill_manual("type", values=colors) +
     facet_wrap(~type, scale="free_y") +
