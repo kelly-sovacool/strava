@@ -14,7 +14,7 @@ jobs:
       - uses: goanpeca/setup-miniconda@v1
         with:
            activate-environment: strava
-           environment-file: config/environment.yml
+           environment-file: environment.yml
            python-version: 3.6
            auto-activate-base: false
       - name: snakemake
