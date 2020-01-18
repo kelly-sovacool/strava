@@ -10,7 +10,8 @@ library(readr)
 library(scales)
 library(tidyr)
 source(here::here("code", "read_processed_data.R"))
-
+# TODO: for bar_plot_month: set y-max based on activity data, don't hard-code
+# TODO: label plot with all data over time with lines for each year
 # TODO: DRY & modularize the code 
 if (exists("snakemake")) {
     filename_csv <- snakemake@input[["csv"]]
@@ -62,6 +63,40 @@ filter_dist <- function(data) {
     )
 }
 
+filter_count <- function(data) {
+    types_to_keep <- data %>%
+        group_by(type) %>%
+        summarise(n=n()) %>%
+        filter(n > 5) %>%
+        pull(type)
+    return(data %>%
+               filter(type %in% types_to_keep))
+}
+
+filter_type <- function(data, type_str) {
+    filter(data, as.character(type) == type_str)
+}
+
+plot_bar_facet <- function(data, x_col_str, scale = "fixed") {
+    ggplot2::ggplot(data, aes_string(x=x_col_str, y="moving_time_hrs", fill="type")) +
+        geom_col(position="stack") +
+        scale_fill_manual("type", values=colors) +
+        facet_wrap(~year, nrow = length(data$year %>% unique()), scale=scale) +
+        theme_classic()
+}
+
+# activities binned by week 
+plot_bar_week <- function(data, ymax) {
+    colors <- set_colors(data)
+    plot <- data %>% ggplot2::ggplot(aes(x=week, y=moving_time_hrs, fill=type)) +
+        geom_col(position="stack") +
+        scale_fill_manual("type", values=colors) +
+        ylim(0, ymax) +
+        scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %d") +
+        theme_classic() +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+}
+
 #default_aspect_ratio <- 4/3
 default_height <- 6
 get_width <- function(height=6, aspect_ratio=4/3) {
@@ -73,62 +108,59 @@ get_height <- function(width=8, aspect_ratio=4/3) {
 }
 default_alpha <- 0.7
 
+### Load the data ###
+
 act_data <- read_data(filename_csv)
 
 colors <- set_colors(act_data)
 
 ### Make the plots ###
 
-# activities binned by week 
-plot_bar_week <- function(data) {
-    colors <- set_colors(data)
-    plot <- data %>% ggplot2::ggplot(aes(x=week, y=moving_time_hrs, fill=type)) +
-        geom_col(position="stack") +
-        scale_fill_manual("type", values=colors) +
-        ylim(0, 25) +
-        scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %d") +
-        theme_classic() +
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-}
+# TODO: annotate with personal events (bought commuter bike, bought road bike, etc)
 
-bar_plot_all_week <- plot_bar_week(act_data) +
-    scale_x_datetime(date_breaks = "4 weeks", date_labels = "%d %b %Y") +
+ymax_week <- act_data %>%
+    group_by(week) %>%
+    summarise(total_hrs = sum(moving_time_hrs)) %>% 
+    pull(total_hrs) %>% 
+    max()
+
+bar_plot_all_week <- plot_bar_week(act_data, ymax_week) +
+    scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
     ggtitle("All Strava Activities")
 ggsave(bar_plot_all_week, filename = filename_bar_all_week,
        width = default_width, height = default_height)
 
 for (year in years) {
     year <- as.character(year)
-    bar_plot_year <- plot_bar_week(filter_year(act_data, "start_date", year)) +
+    bar_plot_year <- plot_bar_week(filter_year(act_data, "start_date", year), 
+                                   ymax_week) +
         ggtitle(paste0(year, " Activites"))
     ggsave(bar_plot_year, filename = here::here("figures", paste0("bar_", year,".png")),
            width = 6, height = get_height(6))
 }
 
 # binned by month
-plot_bar_facet <- function(data, x_col_str, scale = "fixed") {
-    ggplot2::ggplot(data, aes_string(x=x_col_str, y="moving_time_hrs", fill="type")) +
-        geom_col(position="stack") +
-        scale_fill_manual("type", values=colors) +
-        facet_wrap(~year, nrow = length(data$year %>% unique()), scale=scale) +
-        theme_classic()
-}
-
+ymax_month <- act_data %>% 
+    group_by(month) %>% 
+    summarise(total_hrs = sum(moving_time_hrs)) %>% 
+    pull(total_hrs) %>% 
+    max()
 bar_plot_month <- plot_bar_facet(act_data, "month") + 
-    ylim(0, 85) + 
+    ylim(0, ymax_month) + 
     xlim(0, 12) +
     scale_x_continuous(breaks=1:12, labels = month.abb)
 ggsave(bar_plot_month, filename=filename_bar_all_month, height=get_height(7), width=7)
 
 # binned by day
+ymax <- act_data %>% group_by(yday) %>% summarise(total_hrs = sum(moving_time_hrs)) %>% pull(total_hrs) %>% max()
 bar_plot_day <- plot_bar_facet(act_data, "yday") + 
-    ylim(0, 7) +
+    ylim(0, ymax) +
     xlim(0, 366) +
     scale_x_continuous(breaks = c(1,31,59,90,120,151,181,212,243,273,304,334,365), labels=c("", "31 Jan", "28 Feb", "31 Mar", "30 Apr", "31 May", "30 Jun", "31 Jul", "31 Aug", "30 Sep", "31 Oct", "30 Nov", "31 Dec"))
 ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=7)
 
 # jitter type x time
-jitter_plot_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
+jitter_plot_time <- act_data %>% filter_count() %>%
     ggplot(aes(type, moving_time_hrs)) +
     stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
                  geom = "crossbar", width = 0.9, color="gray35") +
@@ -203,7 +235,7 @@ ggsave(jitter_plot_weekday_dist_grid, filename = here::here('figures', "jitter_w
 
 # jitter weekday x time
 jitter_plot_weekday_time_grid <- act_data %>% 
-    filter(!(type %in% c("Hike", "Walk", "Elliptical")))%>%
+    filter_count() %>%
     ggplot(aes(wday, moving_time_hrs)) +
     stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
                  geom = "crossbar", width = 0.9, color="gray35") +
@@ -216,9 +248,6 @@ ggsave(jitter_plot_weekday_time_grid, filename = here::here('figures', "jitter_w
 
 # boxplot weekday x distance
 # TODO: use cowplot for better control
-filter_type <- function(data, type_str) {
-    filter(data, as.character(type) == type_str)
-}
 plot_box <- function(data, x_str, y_str, fill_str) {
     ggplot(data, aes_string(x=x_str, y=y_str, fill=fill_str)) +
         geom_boxplot() + 
@@ -230,7 +259,7 @@ plot_box <- function(data, x_str, y_str, fill_str) {
 }
 
 # boxplot weekday x time
-box_plot_weekday_time <- act_data %>% filter(!(type %in% c("Hike", "Walk", "Elliptical"))) %>% 
+box_plot_weekday_time <- act_data %>% filter_count() %>%
     ggplot(aes(wday, moving_time_hrs, fill=type)) +
     geom_boxplot(aes(fill=type)) +
     scale_fill_manual("type", values=colors) +
