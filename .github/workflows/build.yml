@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+    - 'master'
+  pull_request:
+    branches:
+    - 'master'
+
+jobs:
+  build:
+    runs-on: 'macos-latest'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goanpeca/setup-miniconda@v1
+        with:
+           activate-environment: anaconda-client-env
+           environment-file: config/environment.yml
+           python-version: 3.6
+           auto-activate-base: false
+      - shell: bash -l {0}
+        run: |
+          conda info
+          conda list
