@@ -19,13 +19,6 @@ source(here::here("code", "read_processed_data.R"))
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 ```
 
-## Summary
-
-```{r}
-table_sum <- readr::read_csv(here::here("data" ,"processed", "summary.csv"))
-knitr::kable(table_sum)
-```
-
 ## Progress over time
 
 ### Distance
@@ -94,4 +87,13 @@ knitr::include_graphics(here::here('figures', "jitter_weekday_dist_grid.png"))
 ```{r}
 knitr::include_graphics(here::here("figures", "line_time.png"))
 knitr::include_graphics(here::here("figures", "line_dist.png"))
+```
+
+## Summary table
+
+```{r}
+table_sum <- readr::read_csv(here::here("data" ,"processed", "summary.csv"))
+knitr::kable(table_sum %>% 
+               arrange(desc(year))
+)
 ```

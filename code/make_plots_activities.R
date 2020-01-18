@@ -168,7 +168,8 @@ jitter_plot_time <- act_data %>% filter_count() %>%
     scale_color_manual("type", values=colors) +
     scale_y_continuous(breaks=0:7) +
     ggtitle("Strava Activities") +
-    theme_classic()
+    theme_classic() +
+    theme(legend.position = "none")
 ggsave(jitter_plot_time, filename = here::here("figures", "jitter_type_time.png"), height = 6, width = get_width(6))
 
 # jitter time x year, facet by type
@@ -180,7 +181,8 @@ jitter_plot_time_year <- act_data %>% filter(type %in% c("Ride", "Run")) %>%
     facet_wrap(~type, nrow=1, scale="free") +
     scale_color_manual("type", values=colors) +
     scale_y_continuous(breaks=0:7) +
-    theme_classic()
+    theme_classic() +
+    theme(legend.position = "none")
 ggsave(jitter_plot_time_year, filename = here::here("figures", "jitter_time_year.png"), height = 5, width = get_width(5))
 
 # jitter dist x year, facet by type
@@ -192,7 +194,8 @@ jitter_plot_dist_year <- act_data %>% filter(type %in% c("Ride", "Run")) %>%
     facet_wrap(~type, nrow=1, scale="free") +
     scale_color_manual("type", values=colors) +
     scale_y_continuous(breaks = c(0, 5, seq(10, 100, by = 10))) +
-    theme_classic()
+    theme_classic() +
+    theme(legend.position = "none")
 ggsave(jitter_plot_dist_year, filename = here::here("figures", "jitter_dist_year.png"), height = 5, width = get_width(5))
 
 
@@ -230,7 +233,8 @@ jitter_plot_weekday_dist_grid <- act_data %>%
     scale_color_manual("type", values=colors) +
     facet_grid(type~wday, scale="free") +
     ylab("Distance (mi)") +
-    theme_classic()
+    theme_classic()  +
+    theme(legend.position = "none")
 ggsave(jitter_plot_weekday_dist_grid, filename = here::here('figures', "jitter_weekday_dist_grid.png"), width=10, height=get_height(10))
 
 # jitter weekday x time
@@ -243,7 +247,8 @@ jitter_plot_weekday_time_grid <- act_data %>%
     scale_color_manual("type", values=colors) +
     facet_grid(type~wday, scale="free") +
     ylab("Moving time (hrs)") +
-    theme_classic()
+    theme_classic() +
+    theme(legend.position = "none")
 ggsave(jitter_plot_weekday_time_grid, filename = here::here('figures', "jitter_weekday_time_grid.png"), width=10, height=get_height(10))
 
 # boxplot weekday x distance
@@ -265,7 +270,8 @@ box_plot_weekday_time <- act_data %>% filter_count() %>%
     scale_fill_manual("type", values=colors) +
     scale_y_continuous(breaks=1:7) +
     facet_wrap(~type, nrow = 1) +
-    theme_classic()
+    theme_classic() +
+    theme(legend.position = "none")
 ggsave(box_plot_weekday_time, filename = here::here('figures', "box_weekday_time.png"), width=8, height=get_height(8))
 
 #### try cowplot
@@ -282,31 +288,41 @@ box_plot_weekday_dist_wrap <- act_data %>% filter_dist() %>%
     scale_fill_manual("type", values=colors) +
     facet_wrap(~type, scale="free_y") +
     ylab("Distance (mi)") +
-    theme_classic()
+    theme_classic() +
+    theme(legend.position = "none")
 ggsave(box_plot_weekday_dist_wrap, 
        filename = here::here('figures', "box_weekday_dist_wrap.png"), 
        width=8, height=get_height(8))
 ######
 
 # cumulative activity time
-line_plot_time <- act_data %>% ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
+line_plot_time <- act_data %>% 
+    filter_count() %>%
+    ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
     geom_line() +
-    scale_color_brewer(palette = "Spectral") +
+    scale_color_brewer(palette=2, type="qual") +
     #scale_color_manual("type", colors) +  # bug in ggplot?
-    scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %Y") +
-    scale_y_continuous(breaks=pretty_breaks()) +
+    scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
+    scale_y_continuous(labels=label_comma()) +
+    ylab("elapsed hrs (cumulative)") +
+    xlab("") +
     theme_classic() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Cumulative Activity Time (hrs)")
 ggsave(line_plot_time, filename=here::here("figures", "line_time.png"), width = default_width, height = default_height)
 
 # cumulative activity distance
-line_plot_dist <- act_data %>% ggplot(aes(x=start_date, y=elapsed_dist_cum_type, color=type)) +
+line_plot_dist <- act_data %>% 
+    filter_dist() %>%
+    ggplot(aes(x=start_date, y=elapsed_dist_cum_type, color=type)) +
     geom_line() +
-    scale_color_brewer(palette = "Spectral") +
+    scale_color_brewer(palette=2, type="qual") +
     #scale_color_manual("type", colors) +  # bug in ggplot?
-    scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %Y") +
-    scale_y_continuous(breaks=pretty_breaks()) +
+    scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
+    scale_y_continuous(breaks=seq(0, max(act_data$elapsed_dist_cum_type), 500),
+                       labels=label_comma()) +
+    ylab("distance mi (cumulative)") +
+    xlab("") +
     theme_classic() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Cumulative Activity Distance (mi)")
