@@ -42,3 +42,12 @@ act_data <- act_data_raw %>%
            )
 
 readr::write_csv(act_data, filename_csv_processed)
+
+table_sum <- act_data %>%
+    group_by(year, type) %>%
+    summarize(n=n(),
+              sum_dist_mi=round(sum(distance_mi),1),
+              med_dist_mi=round(median(distance_mi), 1),
+              sum_time_hrs=sum(elapsed_time_hrs),
+              med_time_hrs=median(elapsed_time_hrs))
+readr::write_csv(table_sum, here::here("data" ,"processed", "summary.csv"))

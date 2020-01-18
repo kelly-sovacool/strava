@@ -12,12 +12,9 @@ github-repo: kelly-sovacool/strava
 View the source code on GitHub: [kelly-sovacool/strava](https://github.com/kelly-sovacool/strava)
 
 ```{r setup, include=FALSE}
-library(dplyr)
-library(ggplot2)
 library(here)
 library(knitr)
 library(rmarkdown)
-library(scales)
 source(here::here("code", "read_processed_data.R"))
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 ```
@@ -25,28 +22,7 @@ knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
 ## Summary
 
 ```{r}
-act_data <- read_data(here::here("data", "processed", "activities.csv"))
-set_colors <- function(data) {
-    palette = RColorBrewer::brewer.pal(n = 8, name = "Paired")
-    colors = list()
-    colors[["Ride"]] <- palette[[4]]
-    colors[["Run"]] <- palette[[8]]
-    colors[["RockClimbing"]] <- palette[[3]]
-    colors[["Rowing"]] <- palette[[1]]
-    colors[["Swim"]] <- palette[[2]]
-    colors[["Hike"]] <- palette[[6]]
-    colors[["Walk"]] <- palette[[5]]
-    colors[["Elliptical"]] <- palette[[7]]
-    colors
-}
-colors <- set_colors(act_data)
-table_sum <- act_data %>%
-    group_by(year, type) %>%
-    summarize(n=n(),
-              sum_dist_mi=round(sum(distance_mi),1),
-              med_dist_mi=round(median(distance_mi), 1),
-              sum_time_hrs=sum(elapsed_time_hrs),
-              med_time_hrs=median(elapsed_time_hrs))
+table_sum <- readr::read_csv(here::here("data" ,"processed", "summary.csv"))
 knitr::kable(table_sum)
 ```
 
@@ -56,18 +32,7 @@ knitr::kable(table_sum)
 
 ```{r}
 # sum
-bar_sum_dist <- table_sum %>%
-    filter(type %in% c("Ride", "Run")) %>%
-    ggplot(aes(year, sum_dist_mi, fill=type, label=sum_dist_mi)) +
-    geom_col(position="dodge") +
-    geom_text(vjust=-0.3, position = position_dodge(width=1)) +
-    scale_fill_manual("type", values=colors) +
-    #facet_wrap(~type, nrow=1) +
-    scale_y_continuous(breaks=pretty_breaks()) +
-    ggtitle("Total Distance (mi) by year") +
-    theme_classic()
-ggsave(bar_sum_dist, filename = here::here("figures", "bar_sum_dist.png"))
-bar_sum_dist
+knitr::include_graphics(here::here("figures", "bar_sum_dist.png"))
 # jitter
 knitr::include_graphics(here::here("figures", "jitter_dist_year.png"))
 ```
@@ -75,18 +40,7 @@ knitr::include_graphics(here::here("figures", "jitter_dist_year.png"))
 ### Duration
 ```{r}
 # sum
-bar_sum_hrs <- table_sum %>%
-    filter(type %in% c("Ride", "Run", "RockClimbing", "Rowing", "Swim")) %>%
-    ggplot(aes(year, sum_time_hrs, fill=type, label=sum_time_hrs)) +
-    geom_col(position="dodge") +
-    geom_text(vjust=-0.3, position = position_dodge(width=0.87)) +
-    scale_fill_manual("type", values=colors) +
-    #facet_wrap(~type, nrow=1) +
-    scale_y_continuous(breaks=pretty_breaks()) +
-    ggtitle("Total Time (hrs) by year") +
-    theme_classic()
-ggsave(bar_sum_hrs, filename = here::here("figures", "bar_sum_hrs.png"))
-bar_sum_hrs
+knitr::include_graphics(here::here("figures", "bar_sum_hrs.png"))
 # jitter
 knitr::include_graphics(here::here("figures", "jitter_time_year.png"))
 ```

@@ -31,13 +31,14 @@ rule process:
         R="code/process_raw_data.R",
         csv=rules.download.output.csv
     output:
-        csv="data/processed/activities.csv"
+        csv="data/processed/activities.csv",
+        sum="data/processed/summary.csv"
     script:
         "{input.R}"
 
-rule plot:
+rule plot_activities:
     input:
-        R="code/make_plots.R",
+        R="code/make_plots_activities.R",
         csv=rules.process.output.csv
     output:
         bar_plot_week="figures/bar_all_week.png",
@@ -51,11 +52,22 @@ rule plot:
     script:
         "{input.R}"
 
+rule plot_summary:
+    input:
+        R="code/make_plots_summary.R",
+        sum=rules.process.output.sum
+    output:
+        "figures/bar_sum_dist.png",
+        "figures/bar_sum_hrs.png"
+    script:
+        "{input.R}"
+
 rule render_report:
     input:
         R="code/render.R",
         rmd="code/report.Rmd",
-        plots=rules.plot.output
+        plots1=rules.plot_activities.output,
+        plots2=rules.plot_summary.output
     output:
         html="docs/report.html"
     script:
@@ -63,7 +75,8 @@ rule render_report:
 
 rule cat_figures_readme:
     input:
-        figures=rules.plot.output
+        rules.plot_activities.output,
+        rules.plot_summary.output
     output:
         md="figures/README.md"
     run:
