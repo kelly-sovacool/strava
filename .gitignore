@@ -2,7 +2,3 @@
 .Rproj.user
 Rplots.pdf
 .snakemake/
-config/config.yml
-.token
-config/.token
-.httr-oauth
