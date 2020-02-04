@@ -1,6 +1,6 @@
-library(here)
-library(httr)
-library(readr)
+if(!("rStrava" %in% rownames(installed.packages()))) {
+    devtools::install_github('fawda123/rStrava')
+}
 library(rStrava)
 
 if (exists("snakemake")) {
