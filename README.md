@@ -1,4 +1,5 @@
 # Strava
+[![build](https://github.com/kelly-sovacool/strava/workflows/auto-update/badge.svg)](https://github.com/kelly-sovacool/strava/actions)
 
 Having fun plotting my activity data from [Strava](http://bit.ly/strava-kelly)!
 
