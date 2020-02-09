@@ -1,4 +1,4 @@
-name: strava-dev
+name: strava
 channels:
   - conda-forge
   - bioconda
