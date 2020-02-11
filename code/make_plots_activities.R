@@ -10,9 +10,9 @@ library(readr)
 library(scales)
 library(tidyr)
 source(here::here("code", "read_processed_data.R"))
-# TODO: for bar_plot_month: set y-max based on activity data, don't hard-code
 # TODO: label plot with all data over time with lines for each year
 # TODO: DRY & modularize the code 
+# TODO: use rmarkdown chunk fig.path option instead of ggsave
 if (exists("snakemake")) {
     filename_csv <- snakemake@input[["csv"]]
     filename_bar_all_week <- snakemake@output[["bar_plot_week"]]
@@ -26,7 +26,7 @@ if (exists("snakemake")) {
     filename_bar_all_day <- here::here("figures", "bar_all_day.png")
     years = 2017:2019
 }
-
+theme_set(theme_classic())
 set_colors <- function(data) {
     palette = RColorBrewer::brewer.pal(n = 10, name = "Paired")
     colors = list()
@@ -46,7 +46,17 @@ set_colors <- function(data) {
 filter_year <- function(data, date_col, year_str) {
     year_interval <- lubridate::interval(lubridate::ymd(paste0(year_str, "-01-01")),
                                          lubridate::ymd(paste0(year_str, "-12-31")))
-    data %>% filter(UQ(as.symbol(date_col)) %within% year_interval)
+    return(data %>% 
+               filter(UQ(as.symbol(date_col)) %within% year_interval)
+    )
+}
+
+filter_last_4_weeks <- function(data, date_col) {
+    date_4_weeks_ago <- lubridate::today() - lubridate::dweeks(4)
+    return(
+        data %>% 
+            filter({{ date_col }} > date_4_weeks_ago)
+    )
 }
 
 filter_dist <- function(data) {
@@ -54,7 +64,6 @@ filter_dist <- function(data) {
         group_by(type) %>% 
         summarise(total_dist_mi=sum(distance_mi),
                   n=n()) %>% 
-        filter(n > 5) %>%
         filter(total_dist_mi > 0) %>% 
         pull(type)
     return(
@@ -115,6 +124,45 @@ act_data <- read_data(filename_csv)
 colors <- set_colors(act_data)
 
 ### Make the plots ###
+
+
+## summarize last 4 weeks ##
+act_data_last_4_weeks <- act_data %>% 
+    filter_last_4_weeks(start_date) %>% 
+    mutate(type = fct_rev(type)) %>%
+    group_by(type) %>%
+    summarize(total_dist=sum(distance_mi),
+              total_time=sum(moving_time_hrs))
+
+bar_dist_last_4_weeks <- act_data_last_4_weeks %>%
+    filter_dist() %>%
+    ggplot(aes(x=type, y=total_dist, fill=type)) + 
+    geom_col() + 
+    scale_fill_manual("type", values=colors) + 
+    coord_flip() + 
+    ylab("Distance (mi)") + xlab("") + ggtitle("Activities during the last 4 weeks") +
+    theme(legend.position = "none")
+ggsave(bar_dist_last_4_weeks, filename=here::here("figures", "bar_dist_last_4_weeks.png"), height=get_height(6), width=6)
+
+annot_dist <- function(data, type_str) {
+    total_dist  <- round(data %>% filter(type == type_str) %>% pull("total_dist"), 1)
+    annotate("text", x=type_str, y=1.5, label=paste0(total_dist, " miles"))
+}
+bar_time_last_4_weeks <- act_data_last_4_weeks %>%
+    ggplot(aes(x=type, y=total_time)) + 
+    geom_col(aes(fill=type)) + 
+    annot_dist(act_data_last_4_weeks, "Ride") +
+    annot_dist(act_data_last_4_weeks, "Run") +
+    annot_dist(act_data_last_4_weeks, "Swim") +
+    scale_fill_manual("type", values=colors) + 
+    coord_flip() + 
+    ylab("Time (hrs)") + xlab("") + ggtitle("Activities during the last 4 weeks") +
+    theme(legend.position = "none")
+ggsave(bar_time_last_4_weeks, filename=here::here("figures", "bar_time_last_4_weeks.png"), height=get_height(6), width=6)
+
+
+
+
 
 # TODO: annotate with personal events (bought commuter bike, bought road bike, etc)
 
