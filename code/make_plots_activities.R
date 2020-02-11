@@ -146,19 +146,21 @@ ggsave(bar_dist_last_4_weeks, filename=here::here("figures", "bar_dist_last_4_we
 
 annot_dist <- function(data, type_str) {
     total_dist  <- round(data %>% filter(type == type_str) %>% pull("total_dist"), 1)
-    annotate("text", x=type_str, y=1.5, label=paste0(total_dist, " miles"))
+    annotate("text", x=type_str, y=2, label=paste0(total_dist, " miles"))
 }
 bar_time_last_4_weeks <- act_data_last_4_weeks %>%
     ggplot(aes(x=type, y=total_time)) + 
     geom_col(aes(fill=type)) + 
+    geom_text(aes(label=total_time), nudge_y = 0.6) +
     annot_dist(act_data_last_4_weeks, "Ride") +
     annot_dist(act_data_last_4_weeks, "Run") +
     annot_dist(act_data_last_4_weeks, "Swim") +
     scale_fill_manual("type", values=colors) + 
     coord_flip() + 
-    ylab("Time (hrs)") + xlab("") + ggtitle("Activities during the last 4 weeks") +
+    ylab("Time (hrs)") + xlab("") + ggtitle("Activity duration in the last 4 weeks") +
+    ylim(0, max(ceiling(act_data_last_4_weeks$total_time))) +
     theme(legend.position = "none")
-ggsave(bar_time_last_4_weeks, filename=here::here("figures", "bar_time_last_4_weeks.png"), height=get_height(6), width=6)
+ggsave(bar_time_last_4_weeks, filename=here::here("figures", "bar_time_last_4_weeks.png"), height=6, width=get_height(6))
 
 
 
