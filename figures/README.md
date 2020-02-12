@@ -14,9 +14,13 @@
 
 ![](bar_all_week.png)
 
+![](bar_dist_last_4_weeks.png)
+
 ![](bar_sum_dist.png)
 
 ![](bar_sum_hrs.png)
+
+![](bar_time_last_4_weeks.png)
 
 ![](box_weekday_dist_wrap.png)
 
