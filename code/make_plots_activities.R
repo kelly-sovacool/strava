@@ -135,7 +135,7 @@ act_data_last_4_weeks <- act_data %>%
               total_time=sum(moving_time_hrs))
 
 bar_dist_last_4_weeks <- act_data_last_4_weeks %>%
-    filter_dist() %>%
+    filter(total_dist > 0) %>%
     ggplot(aes(x=type, y=total_dist, fill=type)) + 
     geom_col() + 
     scale_fill_manual("type", values=colors) + 
