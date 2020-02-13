@@ -3,6 +3,7 @@ library(dplyr)
 library(forcats)
 library(here)
 library(ggplot2)
+library(glue)
 library(lubridate)
 library(magrittr)
 library(RColorBrewer)
@@ -106,7 +107,7 @@ plot_bar_week <- function(data, ymax) {
         theme(axis.text.x = element_text(angle = 90, hjust = 1))
 }
 
-#default_aspect_ratio <- 4/3
+# default_aspect_ratio <- 4/3
 default_height <- 6
 get_width <- function(height=6, aspect_ratio=4/3) {
     height * aspect_ratio
@@ -131,8 +132,8 @@ act_data_last_4_weeks <- act_data %>%
     filter_last_4_weeks(start_date) %>% 
     mutate(type = fct_rev(type)) %>%
     group_by(type) %>%
-    summarize(total_dist=sum(distance_mi),
-              total_time=sum(moving_time_hrs))
+    summarize(total_dist=round(sum(distance_mi),1),
+              total_time=round(sum(moving_time_hrs),1))
 
 bar_dist_last_4_weeks <- act_data_last_4_weeks %>%
     filter(total_dist > 0) %>%
@@ -144,26 +145,24 @@ bar_dist_last_4_weeks <- act_data_last_4_weeks %>%
     theme(legend.position = "none")
 ggsave(bar_dist_last_4_weeks, filename=here::here("figures", "bar_dist_last_4_weeks.png"), height=get_height(6), width=6)
 
-annot_dist <- function(data, type_str) {
-    total_dist  <- round(data %>% filter(type == type_str) %>% pull("total_dist"), 1)
-    annotate("text", x=type_str, y=2.3, label=paste0(total_dist, " miles"))
-}
-bar_time_last_4_weeks <- act_data_last_4_weeks %>%
-    ggplot(aes(x=type, y=total_time)) + 
+bar_time_last_4_weeks <- act_data_last_4_weeks %>% 
+    mutate(name=as.character(type)) %>% 
+    mutate(name = case_when(total_dist > 0 ~ glue("{type} (**{total_dist} mi**) "),
+                            TRUE ~ name)
+           ) %>%
+    mutate(name = fct_reorder(name, total_time, .fun = sum, .desc=FALSE)) %>%
+    ggplot(aes(x=name, y=total_time)) + 
     geom_col(aes(fill=type)) + 
-    geom_text(aes(label=total_time), nudge_y = 0.8) +
-    annot_dist(act_data_last_4_weeks, "Ride") +
-    annot_dist(act_data_last_4_weeks, "Run") +
-    annot_dist(act_data_last_4_weeks, "Swim") +
+    geom_text(aes(label=total_time), nudge_y = 1) +
+    #annot_dist(act_data_last_4_weeks, "Ride") +
+    #annot_dist(act_data_last_4_weeks, "Run") +
+    #annot_dist(act_data_last_4_weeks, "Swim") +
     scale_fill_manual("type", values=colors) + 
     coord_flip() + 
-    ylab("Time (hrs)") + xlab("") + ggtitle("Activity duration in the last 4 weeks") +
-    ylim(0, max(ceiling(act_data_last_4_weeks$total_time))) +
-    theme(legend.position = "none")
+    ylab("Time (hrs)") + xlab("") + ggtitle("Activities - Last 4 Weeks") +
+    ylim(0, max(ceiling(act_data_last_4_weeks$total_time))+5) +
+    theme(legend.position = "none", axis.text.y = ggtext::element_markdown())
 ggsave(bar_time_last_4_weeks, filename=here::here("figures", "bar_time_last_4_weeks.png"), height=3, width=4)
-
-
-
 
 
 # TODO: annotate with personal events (bought commuter bike, bought road bike, etc)

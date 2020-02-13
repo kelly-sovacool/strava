@@ -15,6 +15,7 @@ dependencies:
   - r-forcats
   - r-ggmap
   - r-ggplot2
+  - r-glue
   - r-here
   - r-httr
   - r-knitr
