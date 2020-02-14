@@ -147,7 +147,7 @@ ggsave(bar_dist_last_4_weeks, filename=here::here("figures", "bar_dist_last_4_we
 
 bar_time_last_4_weeks <- act_data_last_4_weeks %>% 
     mutate(name=as.character(type)) %>% 
-    mutate(name = case_when(total_dist > 0 ~ glue("{type} (**{total_dist} mi**) "),
+    mutate(name = case_when(total_dist > 0 ~ glue("{type} ({total_dist} mi) "),
                             TRUE ~ name)
            ) %>%
     mutate(name = fct_reorder(name, total_time, .fun = sum, .desc=FALSE)) %>%
@@ -161,7 +161,7 @@ bar_time_last_4_weeks <- act_data_last_4_weeks %>%
     coord_flip() + 
     ylab("Time (hrs)") + xlab("") + ggtitle("Activities - Last 4 Weeks") +
     ylim(0, max(ceiling(act_data_last_4_weeks$total_time))+5) +
-    theme(legend.position = "none", axis.text.y = ggtext::element_markdown())
+    theme(legend.position = "none")#, axis.text.y = ggtext::element_markdown())
 ggsave(bar_time_last_4_weeks, filename=here::here("figures", "bar_time_last_4_weeks.png"), height=3, width=4)
 
 

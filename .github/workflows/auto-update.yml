@@ -17,8 +17,6 @@ jobs:
            auto-activate-base: false
       - uses: r-lib/actions/setup-r@v1
       - uses: r-lib/actions/setup-pandoc@v1
-      - name: Install ggtext
-        run: Rscript -e "install.packages(c('remotes', 'RCurl'))" -e 'remotes::install_github("wilkelab/ggtext")' 
       - uses: sliteteam/github-action-git-crypt-unlock@1.0.2
         env:
           GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
