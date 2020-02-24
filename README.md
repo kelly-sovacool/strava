@@ -44,6 +44,8 @@ view the rendered html [here](https://sovacool.dev/strava/report.html).
 
 See all plots in the [figures](figures/) directory
 
+![](figures/plot_summary_4_weeks.png)
+
 ![](figures/bar_all_month.png)
 
 ![](figures/jitter_type_dist_log2.png)
