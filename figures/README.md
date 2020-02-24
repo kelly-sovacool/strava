@@ -28,6 +28,8 @@
 
 ![](dag.svg)
 
+![](heatmap_calendar.png)
+
 ![](jitter_dist_year.png)
 
 ![](jitter_time_year.png)
@@ -45,4 +47,6 @@
 ![](line_dist.png)
 
 ![](line_time.png)
+
+![](plot_summary_4_weeks.png)
 
