@@ -28,14 +28,15 @@ act_data <- act_data_raw %>%
            moving_time_min = round((moving_time / 60), 1),
            moving_time_hrs = round((moving_time / 60 / 60), 1),
            type = fct_reorder(type, elapsed_time, .fun = sum, .desc=TRUE),
-           wday = start_date %>% lubridate::ymd_hms() %>% lubridate::wday() %>% as.integer(),
-           mday = start_date %>% lubridate::ymd_hms() %>% lubridate::mday(),
-           yday = start_date %>% lubridate::yday() %>% as.integer(),
-           week = start_date %>% lubridate::ymd_hms() %>% lubridate::floor_date('week'),
-           year = start_date %>% lubridate::year(),
-           month = start_date %>% lubridate::month() %>% as.integer()
+           wday = start_date_local %>% lubridate::ymd_hms() %>% lubridate::wday() %>% as.integer(),
+           mday = start_date_local %>% lubridate::ymd_hms() %>% lubridate::mday(),
+           yday = start_date_local %>% lubridate::yday() %>% as.integer(),
+           week = start_date_local %>% lubridate::ymd_hms() %>% 
+               lubridate::floor_date('week', week_start = 1),
+           year = start_date_local %>% lubridate::year(),
+           month = start_date_local %>% lubridate::month() %>% as.integer()
            ) %>%
-    arrange(start_date) %>%
+    arrange(start_date_local) %>%
     group_by(type) %>%
     mutate(elapsed_hrs_cum_type = cumsum(elapsed_time),
            elapsed_dist_cum_type = cumsum(distance_mi)
