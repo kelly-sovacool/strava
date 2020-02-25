@@ -55,10 +55,13 @@ filter_year <- function(data, date_col, year_str) {
 filter_last_n_weeks <- function(data, 
                                 date_col = start_date_local,
                                 num_weeks_ago=4) {
-    date_4_weeks_ago <- lubridate::today() - lubridate::dweeks(num_weeks_ago)
+    week_date_thresh <- lubridate::floor_date(lubridate::today() - lubridate::dweeks(num_weeks_ago), 
+                                              unit='week', week_start = 1)
     return(
         data %>% 
-            filter({{ date_col }} > date_4_weeks_ago)
+            filter(lubridate::floor_date({{ date_col }}, 
+                                         unit='week', week_start = 1
+                                         ) > week_date_thresh)
     )
 }
 
@@ -160,37 +163,63 @@ bar_time_last_4_weeks <- act_data_last_4_weeks_sum %>%
     #annot_dist(act_data_last_4_weeks, "Run") +
     #annot_dist(act_data_last_4_weeks, "Swim") +
     scale_fill_manual("type", values=colors) + 
-    coord_flip() + 
     ylab("Time (hrs)") + xlab("") +
     ylim(0, max(ceiling(act_data_last_4_weeks_sum$total_time))+5) +
     theme(legend.position = "none")#, axis.text.y = ggtext::element_markdown())
 ggsave(bar_time_last_4_weeks, filename=here::here("figures", "bar_time_last_4_weeks.png"), height=3, width=4)
 
-# github contribution-style calendar heatmap
+# like Strava profile bar plot
+bar_time_stacked_4_weeks <- act_data %>%
+    filter_last_n_weeks(num_weeks_ago = 4) %>% 
+    group_by(week, type) %>%
+    summarize(total_time=sum(moving_time_hrs)) %>%
+    mutate(week_int = as.integer(week),
+           week_str = glue("{mday(week)} {as.character(month(week, label=TRUE, abbr = TRUE))}")) %>%
+    ggplot(aes(x=week_int, y=total_time, fill=type)) +
+    geom_bar(position = "stack", stat = "identity") + 
+    scale_fill_manual("type", values=colors) + 
+    scale_x_reverse(labels=c())+#labels = unique(act_data_last_4_wks$week_str), 
+                    #breaks = unique(act_data_last_4_wks$week_int)) +
+    scale_y_continuous(breaks = pretty_breaks()) +
+    coord_flip() +
+    labs(x = '', y = 'Time (hrs)') +
+    theme(legend.position = "bottom", 
+          legend.title = element_blank(),
+          axis.ticks = element_blank())
+
 act_data_last_4_wks <- act_data %>% 
     filter_last_n_weeks(num_weeks_ago = 4) %>% 
-    group_by(start_date_local) %>% 
-    summarize(total_time=sum(moving_time_hrs), 
-              wday = wday, week = week)
-heatmap_calendar <- act_data_last_4_wks %>%
-    ggplot(aes(x=week, y=wday, fill=total_time)) + 
+    mutate(start_day = lubridate::floor_date(start_date_local, unit="day")) %>%
+    group_by(start_day) %>% 
+    summarize(total_time=sum(moving_time_hrs)) %>% 
+    mutate(week = floor_date(start_day, unit='week', week_start = 1),
+           week_int = as.integer(week),
+           week_str = glue("{mday(week)} {as.character(month(week, label=TRUE, abbr = TRUE))}"),
+           wday = wday(start_day, week_start = 1, label = TRUE, abbr = TRUE))
+# github contribution-style calendar heatmap
+heatmap_calendar <- act_data_last_4_wks %>% 
+    ggplot(aes(x=wday, y=week_int, fill=total_time)) + 
     geom_tile(colour="white", size=1) +
     scale_fill_distiller(type="seq", 
                          na.value = "white",
                          direction = 1,
-                         limits = c(0, max(act_data_last_4_wks$total_time))) +
-    scale_x_datetime(date_breaks = '1 week', date_labels="%d %b") +
-    labs(x = '', y='') +
+                         limits = c(0, max(act_data_last_4_wks$total_time)),
+                         name = "Time (hrs)",
+                         palette = "Greys") +
+    scale_y_reverse(labels = unique(act_data_last_4_wks$week_str), 
+                    breaks = unique(act_data_last_4_wks$week_int)) +
+    scale_x_discrete(position = "top") +
+    labs(x = '', y = '') + 
     theme(panel.background = element_blank(),
           axis.ticks = element_blank(),
           strip.background = element_rect("grey92"),
-          legend.position = "none",
+          legend.position = "bottom",
           axis.line = element_blank()
     )
 ggsave(heatmap_calendar, filename=here::here('figures', 'heatmap_calendar.png'), height=3, width=4)
 title <- ggdraw() + 
     draw_label(
-        "Activities - Last 4 Weeks",
+        "Activity Summary",
         fontface = 'bold',
         x = 0,
         hjust = 0
@@ -198,11 +227,11 @@ title <- ggdraw() +
     theme(
         # add margin on the left of the drawing canvas,
         # so title is aligned with left edge of first plot
-        plot.margin = margin(0, 0, 0, 100)
+        plot.margin = margin(10, 10, 0, 240)
     )
-plots_last_4_wks <- cowplot::plot_grid(bar_time_last_4_weeks, heatmap_calendar)
+plots_last_4_wks <- cowplot::plot_grid(heatmap_calendar, bar_time_stacked_4_weeks, align = "h")
 plot_summary_4_wks <- cowplot::plot_grid(title, plots_last_4_wks, rel_heights = c(0.1, 1), ncol=1)
-ggsave(plot_summary_4_wks, filename=here::here('figures', 'plot_summary_4_weeks.png'), height=3, width=8)
+ggsave(plot_summary_4_wks, filename=here::here('figures', 'plot_summary_4_weeks.png'), height=4, width=8)
 # TODO: annotate with personal events (bought commuter bike, bought road bike, etc)
 
 ymax_week <- act_data %>%
