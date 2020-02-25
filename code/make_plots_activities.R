@@ -256,6 +256,40 @@ for (year in years) {
            width = 6, height = get_height(6))
 }
 
+line_plot_month_time <- act_data %>% 
+    #filter_count(min=3) %>%
+    mutate(month_year = lubridate::floor_date(start_date_local, 
+                                              unit = "month")) %>% 
+    group_by(month_year, type) %>%
+    summarize(moving_time_hrs = sum(moving_time_hrs)) %>%
+    ggplot2::ggplot(aes(x=month_year, y=moving_time_hrs, colour=type)) +
+    geom_line() +
+    scale_colour_manual(values=unlist(colors, use.names=FALSE)) +
+    scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
+    #scale_y_continuous(trans='log2') +
+    theme_classic() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave(line_plot_month_time, filename = here::here('figures', 'line_plot_month_time.png'),
+       width = default_width, height = default_height)
+
+line_plot_month_dist <- act_data %>% 
+    #filter_dist() %>%
+    mutate(month_year = lubridate::floor_date(start_date_local, 
+                                              unit = "month")) %>% 
+    group_by(month_year, type) %>%
+    summarize(distance_mi = sum(distance_mi)) %>%
+    ggplot2::ggplot(aes(x=month_year, y=distance_mi, colour=type)) +
+    geom_line() +
+    scale_colour_manual(values=unlist(colors, use.names=FALSE)) +
+    scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
+    scale_y_continuous(trans='log2', 
+                       #limits = c(1, 800), 
+                       breaks =  c(1, 6.2, 13.1, 24.8, 40, 62.1, 100, 250, 500, 750, 1000)) +
+    theme_classic() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave(line_plot_month_dist, filename = here::here('figures', 'line_plot_month_dist.png'),
+       width = default_width, height = default_height)
+
 # binned by month
 ymax_month <- act_data %>% 
     group_by(month) %>% 
@@ -422,8 +456,7 @@ line_plot_time <- act_data %>%
     filter_count() %>%
     ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
     geom_line() +
-    scale_color_brewer(palette=2, type="qual") +
-    #scale_color_manual("type", colors) +  # bug in ggplot?
+    scale_colour_manual(values=unlist(colors, use.names=FALSE)) +
     scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
     scale_y_continuous(labels=label_comma()) +
     ylab("elapsed hrs (cumulative)") +
@@ -435,11 +468,11 @@ ggsave(line_plot_time, filename=here::here("figures", "line_time.png"), width = 
 
 # cumulative activity distance
 line_plot_dist <- act_data %>% 
+    filter_count() %>%
     filter_dist() %>%
     ggplot(aes(x=start_date, y=elapsed_dist_cum_type, color=type)) +
     geom_line() +
-    scale_color_brewer(palette=2, type="qual") +
-    #scale_color_manual("type", colors) +  # bug in ggplot?
+    scale_colour_manual(values=unlist(colors, use.names=FALSE)) +
     scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
     scale_y_continuous(breaks=seq(0, max(act_data$elapsed_dist_cum_type), 500),
                        labels=label_comma()) +

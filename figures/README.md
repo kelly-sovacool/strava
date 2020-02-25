@@ -46,6 +46,10 @@
 
 ![](line_dist.png)
 
+![](line_plot_month_dist.png)
+
+![](line_plot_month_time.png)
+
 ![](line_time.png)
 
 ![](plot_summary_4_weeks.png)
