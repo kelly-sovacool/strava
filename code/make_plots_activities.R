@@ -229,6 +229,7 @@ title <- ggdraw() +
         # so title is aligned with left edge of first plot
         plot.margin = margin(10, 10, 0, 240)
     )
+# combine github-style calendar heatmap & strava-style stacked bar plot
 plots_last_4_wks <- cowplot::plot_grid(heatmap_calendar, bar_time_stacked_4_weeks, align = "h")
 plot_summary_4_wks <- cowplot::plot_grid(title, plots_last_4_wks, rel_heights = c(0.1, 1), ncol=1)
 ggsave(plot_summary_4_wks, filename=here::here('figures', 'plot_summary_4_weeks.png'), height=4, width=8)
@@ -493,3 +494,114 @@ line_plot_dist <- act_data %>%
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Cumulative Activity Distance (mi)")
 ggsave(line_plot_dist, filename=here::here("figures", "line_dist.png"), width = default_width, height = default_height)
+
+# speed / pace
+
+mph_per_kph <- 0.621371
+min_per_hr <- 60
+act_data <- act_data %>% 
+    mutate(average_speed_mph = average_speed * mph_per_kph,
+           race = case_when(workout_type == 1 ~ TRUE,
+                            workout_type == 11 ~ TRUE,
+                            TRUE ~ FALSE)
+           )
+
+point_ride_speed <- act_data %>% 
+    filter_type('Ride') %>% 
+    filter(average_speed_mph > 0) %>%
+    ggplot(aes(x=start_date_local, 
+               y=average_speed_mph, 
+               fill = distance_mi, 
+               shape=commute)
+           ) +
+    geom_point(alpha=default_alpha) +
+    scale_x_datetime(date_breaks = "1 month", 
+                     date_labels = "%b %Y") +
+    scale_y_continuous(breaks = seq(5, 25, 5),
+                       limits = c(5, 25)) +
+    scale_fill_distiller(type="div", 
+                         palette = 'RdYlBu',
+                         name = "Distance (mi)"
+                         ) +
+    scale_shape_manual(values=c(21,24)) +
+    ylab("Average Speed (mph)") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Ride Speed")
+ggsave(point_ride_speed, 
+       filename=here::here("figures", "point_ride_speed.png"), 
+       width = default_width, height = default_height)
+point_ride_dist <- act_data %>% 
+    filter_type('Ride') %>% 
+    filter(average_speed_mph > 0) %>%
+    ggplot(aes(x=start_date_local, 
+               y= distance_mi, 
+               fill = average_speed_mph, 
+               shape=commute)
+    ) +
+    geom_point(alpha=default_alpha) +
+    scale_x_datetime(date_breaks = "1 month", 
+                     date_labels = "%b %Y") +
+    scale_y_continuous(trans='log2', limits=c(0.25, 105), 
+                       breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
+    scale_fill_distiller(type="div", 
+                         palette = 'RdYlBu',
+                         name = "Average Speed (mph)"
+    ) +
+    scale_shape_manual(values=c(21,24)) +
+    ylab("Distance (mi)") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Ride Distance")
+ggsave(point_ride_dist, 
+       filename=here::here("figures", "point_ride_dist.png"), 
+       width = default_width, height = default_height)
+
+point_run_pace <- act_data %>% 
+    filter_type('Run') %>% 
+    filter(average_speed_mph > 0) %>%
+    mutate(average_pace_minmi = lubridate::dminutes(1 / average_speed_mph * min_per_hr)) %>% 
+    ggplot(aes(x=start_date_local, 
+               y=round(as.numeric(average_pace_minmi)/60, 1), # because ggplot/lubridate can't compare duration objects to numerics right now :( 
+               fill = distance_mi,
+               shape = race)
+           ) +
+    geom_point(alpha=default_alpha) +
+    scale_x_datetime(date_breaks = "1 month", 
+                     date_labels = "%b %Y") +
+    scale_y_continuous(breaks = pretty_breaks()) +
+    scale_fill_distiller(type="div", 
+                         palette = 'RdYlBu',
+                         name = "Distance (mi)"
+                         ) +
+    scale_shape_manual(values=c(21,24)) +
+    ylab("Average Pace (min/mi)") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Run Pace")
+ggsave(point_run_pace, 
+       filename=here::here("figures", "point_run_pace.png"), 
+       width = default_width, height = default_height)
+
+point_run_dist <- act_data %>% 
+    filter_type('Run') %>% 
+    filter(average_speed_mph > 0) %>%
+    mutate(average_pace_minmi = lubridate::dminutes(1 / average_speed_mph * min_per_hr)) %>% 
+    ggplot(aes(x=start_date_local, 
+               y=distance_mi, 
+               fill = round(as.numeric(average_pace_minmi)/60, 1), # because ggplot/lubridate can't compare duration objects to numerics right now :( 
+               shape = race)
+    ) +
+    geom_point(alpha=default_alpha) +
+    scale_x_datetime(date_breaks = "1 month", 
+                     date_labels = "%b %Y") +
+    scale_y_continuous(breaks = pretty_breaks()) +
+    scale_fill_distiller(type="div", 
+                         direction = 1,
+                         palette = 'RdYlBu',
+                         name = "Pace (min/mi)"
+    ) +
+    scale_shape_manual(values=c(21,24)) +
+    ylab("Distance (mi)") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Run Distance")
+ggsave(point_run_dist, 
+       filename=here::here("figures", "point_run_dist.png"), 
+       width = default_width, height = default_height)

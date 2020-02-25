@@ -26,17 +26,27 @@ knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.path = "fi
 knitr::include_graphics(here::here("figures", "plot_summary_4_weeks.png"))
 ```
 
+## Pace
 
-### Distance
+```{r}
+knitr::include_graphics(here::here('figures', 'point_ride_speed.png'))
+knitr::include_graphics(here::here('figures', 'point_run_pace.png'))
+```
+
+
+
+## Distance
 
 ```{r}
 # sum
 knitr::include_graphics(here::here("figures", "bar_sum_dist.png"))
 # jitter
 knitr::include_graphics(here::here("figures", "jitter_dist_year.png"))
+knitr::include_graphics(here::here('figures', 'point_ride_dist.png'))
+knitr::include_graphics(here::here('figures', 'point_run_dist.png'))
 ```
 
-### Duration
+## Duration
 ```{r}
 # sum
 knitr::include_graphics(here::here("figures", "bar_sum_hrs.png"))

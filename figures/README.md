@@ -54,3 +54,11 @@
 
 ![](plot_summary_4_weeks.png)
 
+![](point_ride_dist.png)
+
+![](point_ride_speed.png)
+
+![](point_run_dist.png)
+
+![](point_run_pace.png)
+
