@@ -144,8 +144,10 @@ bar_dist_last_4_weeks <- act_data_last_4_weeks_sum %>%
     filter(total_dist > 0) %>%
     ggplot(aes(x=type, y=total_dist, fill=type)) + 
     geom_col() + 
+    geom_text(aes(label=total_dist), nudge_y = 5) +
     scale_fill_manual("type", values=colors) + 
     coord_flip() + 
+    ylim(0, max(ceiling(act_data_last_4_weeks_sum$total_dist))+5) +
     ylab("Distance (mi)") + xlab("") + ggtitle("Activities during the last 4 weeks") +
     theme(legend.position = "none")
 ggsave(bar_dist_last_4_weeks, filename=here::here("figures", "bar_dist_last_4_weeks.png"), height=get_height(6), width=6)
@@ -159,9 +161,6 @@ bar_time_last_4_weeks <- act_data_last_4_weeks_sum %>%
     ggplot(aes(x=name, y=total_time)) + 
     geom_col(aes(fill=type)) + 
     geom_text(aes(label=total_time), nudge_y = 1) +
-    #annot_dist(act_data_last_4_weeks, "Ride") +
-    #annot_dist(act_data_last_4_weeks, "Run") +
-    #annot_dist(act_data_last_4_weeks, "Swim") +
     scale_fill_manual("type", values=colors) + 
     ylab("Time (hrs)") + xlab("") +
     ylim(0, max(ceiling(act_data_last_4_weeks_sum$total_time))+5) +
@@ -267,8 +266,10 @@ line_plot_month_time <- act_data %>%
     scale_colour_manual(values=unlist(colors, use.names=FALSE)) +
     scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
     #scale_y_continuous(trans='log2') +
+    xlab('') +
     theme_classic() +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Monthly Hours")
 ggsave(line_plot_month_time, filename = here::here('figures', 'line_plot_month_time.png'),
        width = default_width, height = default_height)
 
@@ -285,8 +286,10 @@ line_plot_month_dist <- act_data %>%
     scale_y_continuous(trans='log2', 
                        #limits = c(1, 800), 
                        breaks =  c(1, 6.2, 13.1, 24.8, 40, 62.1, 100, 250, 500, 750, 1000)) +
+    xlab('') +
     theme_classic() +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Monthly Distance")
 ggsave(line_plot_month_dist, filename = here::here('figures', 'line_plot_month_dist.png'),
        width = default_width, height = default_height)
 
@@ -303,11 +306,19 @@ bar_plot_month <- plot_bar_facet(act_data, "month") +
 ggsave(bar_plot_month, filename=filename_bar_all_month, height=get_height(7), width=7)
 
 # binned by day
-ymax <- act_data %>% group_by(yday) %>% summarise(total_hrs = sum(moving_time_hrs)) %>% pull(total_hrs) %>% max()
+ymax <- act_data %>% 
+    group_by(yday) %>% 
+    summarise(total_hrs = sum(moving_time_hrs)) %>% 
+    pull(total_hrs) %>% 
+    max()
 bar_plot_day <- plot_bar_facet(act_data, "yday") + 
     ylim(0, ymax) +
     xlim(0, 366) +
-    scale_x_continuous(breaks = c(1,31,59,90,120,151,181,212,243,273,304,334,365), labels=c("", "31 Jan", "28 Feb", "31 Mar", "30 Apr", "31 May", "30 Jun", "31 Jul", "31 Aug", "30 Sep", "31 Oct", "30 Nov", "31 Dec"))
+    scale_x_continuous(breaks = c(1,31,59,90,120,151,
+                                  181,212,243,273,304,334,
+                                  365), 
+                       labels=c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", ""))
 ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=7)
 
 # jitter type x time
