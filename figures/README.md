@@ -56,9 +56,15 @@
 
 ![](point_ride_dist.png)
 
+![](point_ride_grid.png)
+
+![](point_ride_run_grid.png)
+
 ![](point_ride_speed.png)
 
 ![](point_run_dist.png)
+
+![](point_run_grid.png)
 
 ![](point_run_pace.png)
 

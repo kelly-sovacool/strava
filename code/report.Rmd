@@ -29,8 +29,8 @@ knitr::include_graphics(here::here("figures", "plot_summary_4_weeks.png"))
 ## Pace
 
 ```{r}
-knitr::include_graphics(here::here('figures', 'point_ride_speed.png'))
-knitr::include_graphics(here::here('figures', 'point_run_pace.png'))
+knitr::include_graphics(here::here('figures', 'point_ride_grid.png'))
+knitr::include_graphics(here::here('figures', 'point_run_grid.png'))
 ```
 
 
@@ -42,8 +42,6 @@ knitr::include_graphics(here::here('figures', 'point_run_pace.png'))
 knitr::include_graphics(here::here("figures", "bar_sum_dist.png"))
 # jitter
 knitr::include_graphics(here::here("figures", "jitter_dist_year.png"))
-knitr::include_graphics(here::here('figures', 'point_ride_dist.png'))
-knitr::include_graphics(here::here('figures', 'point_run_dist.png'))
 ```
 
 ## Duration

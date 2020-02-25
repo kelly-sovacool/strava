@@ -495,7 +495,7 @@ line_plot_dist <- act_data %>%
     ggtitle("Cumulative Activity Distance (mi)")
 ggsave(line_plot_dist, filename=here::here("figures", "line_dist.png"), width = default_width, height = default_height)
 
-# speed / pace
+# speed / pace & distance over time
 
 mph_per_kph <- 0.621371
 min_per_hr <- 60
@@ -515,7 +515,7 @@ point_ride_speed <- act_data %>%
                shape=commute)
            ) +
     geom_point(alpha=default_alpha) +
-    scale_x_datetime(date_breaks = "1 month", 
+    scale_x_datetime(date_breaks = "3 months", 
                      date_labels = "%b %Y") +
     scale_y_continuous(breaks = seq(5, 25, 5),
                        limits = c(5, 25)) +
@@ -524,12 +524,13 @@ point_ride_speed <- act_data %>%
                          name = "Distance (mi)"
                          ) +
     scale_shape_manual(values=c(21,24)) +
-    ylab("Average Speed (mph)") +
+    ylab("Average Speed (mph)") + xlab('') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Ride Speed")
 ggsave(point_ride_speed, 
        filename=here::here("figures", "point_ride_speed.png"), 
        width = default_width, height = default_height)
+
 point_ride_dist <- act_data %>% 
     filter_type('Ride') %>% 
     filter(average_speed_mph > 0) %>%
@@ -539,16 +540,16 @@ point_ride_dist <- act_data %>%
                shape=commute)
     ) +
     geom_point(alpha=default_alpha) +
-    scale_x_datetime(date_breaks = "1 month", 
+    scale_x_datetime(date_breaks = "3 months", 
                      date_labels = "%b %Y") +
     scale_y_continuous(trans='log2', limits=c(0.25, 105), 
                        breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
     scale_fill_distiller(type="div", 
                          palette = 'RdYlBu',
-                         name = "Average Speed (mph)"
+                         name = "Avg Speed (mph)"
     ) +
     scale_shape_manual(values=c(21,24)) +
-    ylab("Distance (mi)") +
+    ylab("Distance (mi)") + xlab('') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Ride Distance")
 ggsave(point_ride_dist, 
@@ -565,7 +566,7 @@ point_run_pace <- act_data %>%
                shape = race)
            ) +
     geom_point(alpha=default_alpha) +
-    scale_x_datetime(date_breaks = "1 month", 
+    scale_x_datetime(date_breaks = "3 months", 
                      date_labels = "%b %Y") +
     scale_y_continuous(breaks = pretty_breaks()) +
     scale_fill_distiller(type="div", 
@@ -573,7 +574,7 @@ point_run_pace <- act_data %>%
                          name = "Distance (mi)"
                          ) +
     scale_shape_manual(values=c(21,24)) +
-    ylab("Average Pace (min/mi)") +
+    ylab("Average Pace (min/mi)") + xlab('') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Run Pace")
 ggsave(point_run_pace, 
@@ -590,7 +591,7 @@ point_run_dist <- act_data %>%
                shape = race)
     ) +
     geom_point(alpha=default_alpha) +
-    scale_x_datetime(date_breaks = "1 month", 
+    scale_x_datetime(date_breaks = "3 months", 
                      date_labels = "%b %Y") +
     scale_y_continuous(breaks = pretty_breaks()) +
     scale_fill_distiller(type="div", 
@@ -599,9 +600,19 @@ point_run_dist <- act_data %>%
                          name = "Pace (min/mi)"
     ) +
     scale_shape_manual(values=c(21,24)) +
-    ylab("Distance (mi)") +
+    ylab("Distance (mi)") + xlab('') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Run Distance")
 ggsave(point_run_dist, 
        filename=here::here("figures", "point_run_dist.png"), 
        width = default_width, height = default_height)
+
+
+# combine speed/pace & distance plots over time
+point_ride_grid <- cowplot::plot_grid(point_ride_speed, point_ride_dist, align='v', ncol=1)
+ggsave(point_ride_grid, filename=here::here('figures', 'point_ride_grid.png'), height=8, width=6)
+point_run_grid <- cowplot::plot_grid(point_run_pace, point_run_dist, align='v', ncol=1)
+ggsave(point_run_grid, filename=here::here('figures', 'point_run_grid.png'), height=8, width=6)
+
+
+# speed/pace over distance
