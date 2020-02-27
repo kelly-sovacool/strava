@@ -56,6 +56,10 @@
 
 ![](plot_summary_4_weeks.png)
 
+![](point_dist_time_facet.png)
+
+![](point_dist_time_log2.png)
+
 ![](point_grid_speed_dist.png)
 
 ![](point_ride_dist.png)
