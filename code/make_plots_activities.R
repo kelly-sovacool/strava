@@ -162,7 +162,7 @@ bar_time_last_4_weeks <- act_data_last_4_weeks_sum %>%
     geom_col(aes(fill=type)) + 
     geom_text(aes(label=total_time), nudge_y = 1) +
     scale_fill_manual("type", values=colors) + 
-    ylab("Time (hrs)") + xlab("") +
+    ylab("Time (hrs)") + xlab("") + ggtitle("Activities during the last 4 weeks") +
     ylim(0, max(ceiling(act_data_last_4_weeks_sum$total_time))+5) +
     coord_flip() +
     theme(legend.position = "none")#, axis.text.y = ggtext::element_markdown())
@@ -639,7 +639,7 @@ jitter_plot_ride_speed <- act_data %>%
     theme_classic() +
     theme(legend.position = "none")
 jitter_grid_speed_pace <- cowplot::plot_grid(jitter_plot_ride_speed, jitter_plot_run_pace, align='h')
-ggsave(jitter_grid_speed_pace, filename = here::here('figures', 'jitter_grid_speed_pace.png'), height=8, width=6)
+ggsave(jitter_grid_speed_pace, filename = here::here('figures', 'jitter_grid_speed_pace.png'), height=5, width=get_width(5))
 
 # speed/pace over distance
 point_run_pace_dist <- act_data %>% 
@@ -666,4 +666,33 @@ point_ride_speed_dist <- act_data %>%
     theme_classic() +
     theme(legend.position = "none")
 point_grid_speed_dist <- cowplot::plot_grid(point_ride_speed_dist , point_run_pace_dist, align='h')
-ggsave(point_grid_speed_dist, filename = here::here('figures', 'point_grid_speed_dist.png'), height=8, width=6)
+ggsave(point_grid_speed_dist, filename = here::here('figures', 'point_grid_speed_dist.png'), height=5, width=get_width(5))
+
+# distance over moving time
+point_dist_time_facet <- act_data %>%
+    filter_dist() %>% filter_count() %>%
+    ggplot(aes(x=moving_time_min, y=distance_mi,  color=type)) +
+    geom_point() +
+    facet_wrap(~type, scales = "free") +
+    scale_color_manual("type", values=colors) +
+    scale_x_continuous(breaks=c(0, 15, seq(30, 390, 30))) +
+    scale_y_continuous(breaks=c(0,1,2,3.1,6.2,10,13.1,24.8,40,62.1,100)) +
+    #scale_y_continuous(trans="log2", limits=c(0.25, 105), breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
+    theme(legend.position = "none") +
+    labs(x='moving time (mins)', y='distance (mi)')
+ggsave(point_dist_time_facet, 
+       filename = here::here('figures', 'point_dist_time_facet.png'), 
+       height=default_height, width=default_width)
+
+point_dist_time_log2 <- act_data %>%
+    filter(distance_mi > 0) %>% filter_count() %>%
+    ggplot(aes(x=moving_time_min, y=distance_mi,  color=type)) +
+    geom_point() +
+    scale_color_manual("type", values=colors) +
+    scale_x_continuous(breaks=c(0, 15, seq(30, 390, 30))) +
+    scale_y_continuous(trans='log2', 
+                       breaks=c(0.3,1,2,3.1,6.2,10,13.1,24.8,40,62.1,100)) +
+    labs(x='moving time (mins)', y='log2 distance (mi)')
+ggsave(point_dist_time_log2, 
+       filename = here::here('figures', 'point_dist_time_log2.png'),
+       height=default_height, width=default_width)
