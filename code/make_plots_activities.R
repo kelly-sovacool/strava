@@ -614,5 +614,56 @@ ggsave(point_ride_grid, filename=here::here('figures', 'point_ride_grid.png'), h
 point_run_grid <- cowplot::plot_grid(point_run_pace, point_run_dist, align='v', ncol=1)
 ggsave(point_run_grid, filename=here::here('figures', 'point_run_grid.png'), height=8, width=6)
 
+# jitter pace x year
+jitter_plot_run_pace <- act_data %>% 
+    filter_type('Run') %>% 
+    filter(average_speed_mph > 0) %>%
+    mutate(average_pace_minmi = lubridate::dminutes(1 / average_speed_mph * min_per_hr)) %>% 
+    ggplot(aes(year, round(as.numeric(average_pace_minmi)/60, 1))) +
+    stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
+                 geom = "crossbar", width = 0.9, color="gray35") +
+    geom_jitter(aes(color=type), alpha=default_alpha) +
+    scale_color_manual("type", values=colors) +
+    labs(x='', y='Pace (min/mi)') + ggtitle("Run Pace") +
+    theme_classic() +
+    theme(legend.position = "none")
+jitter_plot_ride_speed <- act_data %>% 
+    filter_type('Ride') %>% 
+    filter(average_speed_mph > 0) %>%
+    ggplot(aes(year, average_speed_mph)) +
+    stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median,
+                 geom = "crossbar", width = 0.9, color="gray35") +
+    geom_jitter(aes(color=type), alpha=default_alpha) +
+    scale_color_manual("type", values=colors) +
+    labs(x='', y='Speed (mph)') + ggtitle("Ride Speed") +
+    theme_classic() +
+    theme(legend.position = "none")
+jitter_grid_speed_pace <- cowplot::plot_grid(jitter_plot_ride_speed, jitter_plot_run_pace, align='h')
+ggsave(jitter_grid_speed_pace, filename = here::here('figures', 'jitter_grid_speed_pace.png'), height=8, width=6)
 
 # speed/pace over distance
+point_run_pace_dist <- act_data %>% 
+    filter_type('Run') %>% 
+    filter(average_speed_mph > 0) %>%
+    mutate(average_pace_minmi = lubridate::dminutes(1 / average_speed_mph * min_per_hr)) %>% 
+    ggplot(aes(distance_mi, round(as.numeric(average_pace_minmi)/60, 1))) +
+    geom_point(aes(color=type), alpha=default_alpha) +
+    scale_color_manual("type", values=colors) +
+    scale_x_continuous(breaks = c(1, 3.1, 6.2, 10, 13.1)) +
+    labs(x='Distance (mi)', y='Pace (min/mi)') + ggtitle("Run") +
+    theme_classic() +
+    theme(legend.position = "none")
+point_ride_speed_dist <- act_data %>% 
+    filter_type('Ride') %>% 
+    filter(average_speed_mph > 0) %>%
+    ggplot(aes(distance_mi, average_speed_mph)) +
+    geom_point(aes(color=type), alpha=default_alpha) +
+    scale_color_manual("type", values=colors) +
+    scale_x_continuous(breaks =  c(1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
+    scale_y_continuous(breaks = seq(5, 25, 5),
+                       limits = c(5, 25)) +
+    labs(x='Distance (mi)', y='Speed (mph)') + ggtitle("Ride") +
+    theme_classic() +
+    theme(legend.position = "none")
+point_grid_speed_dist <- cowplot::plot_grid(point_ride_speed_dist , point_run_pace_dist, align='h')
+ggsave(point_grid_speed_dist, filename = here::here('figures', 'point_grid_speed_dist.png'), height=8, width=6)

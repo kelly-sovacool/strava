@@ -5,7 +5,7 @@ Having fun plotting my activity data from [Strava](http://bit.ly/strava-kelly)!
 
 ## Dependencies
 
-Most dependencies are listed in the [conda](https://docs.conda.io/projects/conda/en/latest/index.html) environment file: [`config/env.yml`](config/env.yml).
+Most dependencies are listed in the [conda](https://docs.conda.io/projects/conda/en/latest/index.html) environment file: [`environment.yml`](environment.yml).
 
 Additional dependencies not available in conda:
 
