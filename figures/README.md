@@ -32,6 +32,8 @@
 
 ![](jitter_dist_year.png)
 
+![](jitter_grid_speed_pace.png)
+
 ![](jitter_time_year.png)
 
 ![](jitter_type_dist.png)
@@ -53,6 +55,8 @@
 ![](line_time.png)
 
 ![](plot_summary_4_weeks.png)
+
+![](point_grid_speed_dist.png)
 
 ![](point_ride_dist.png)
 
