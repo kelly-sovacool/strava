@@ -229,7 +229,7 @@ title <- ggdraw() +
         plot.margin = margin(10, 10, 0, 240)
     )
 # combine github-style calendar heatmap & strava-style stacked bar plot
-plots_last_4_wks <- cowplot::plot_grid(heatmap_calendar_4k, bar_time_stacked_4_weeks, align = "h")
+plots_last_4_wks <- cowplot::plot_grid(heatmap_calendar_4wk, bar_time_stacked_4_weeks, align = "h")
 plot_summary_4_wks <- cowplot::plot_grid(title, plots_last_4_wks, rel_heights = c(0.1, 1), ncol=1)
 ggsave(plot_summary_4_wks, filename=here::here('figures', 'plot_summary_4_weeks.png'), height=4, width=8)
 # TODO: annotate with personal events (bought commuter bike, bought road bike, etc)
