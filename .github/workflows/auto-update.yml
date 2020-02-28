@@ -23,7 +23,7 @@ jobs:
       - name: Update
         shell: bash -l {0}
         run: |
-          snakemake
+          snakemake --forcerun download
           git add .
           git config --local user.email "noreply@github.com"
           git config --local user.name "GitHub"
