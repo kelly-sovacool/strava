@@ -1,7 +1,7 @@
 import datetime
 import pathlib
 
-now = datetime.date.now()
+now = datetime.datetime.now()
 update_frequency = datetime.timedelta(hours = 12)
 years = range(2017, now.year+1)
 filename_raw_csv = 'data/raw/activities.csv'
@@ -10,7 +10,7 @@ filename_download_code = 'code/download.R'
 download_code_path = pathlib.Path(filename_download_code)
 # forcerun download rule if the raw data file was last modified before today
 if csv_path.exists():
-    timestamp = datetime.date.fromtimestamp(csv_path.stat().st_mtime)
+    timestamp = datetime.datetime.fromtimestamp(csv_path.stat().st_mtime)
     if (now - update_frequency) > timestamp:
         download_code_path.touch(exist_ok=True)
 
