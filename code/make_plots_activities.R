@@ -197,7 +197,7 @@ act_data_last_4_wks <- act_data %>%
            week_str = glue("{mday(week)} {as.character(month(week, label=TRUE, abbr = TRUE))}"),
            wday = wday(start_day, week_start = 1, label = TRUE, abbr = TRUE))
 # github contribution-style calendar heatmap
-heatmap_calendar <- act_data_last_4_wks %>% 
+heatmap_calendar_4wk <- act_data_last_4_wks %>% 
     ggplot(aes(x=wday, y=week_int, fill=total_time)) + 
     geom_tile(colour="white", size=1) +
     scale_fill_distiller(type="seq", 
@@ -216,7 +216,6 @@ heatmap_calendar <- act_data_last_4_wks %>%
           legend.position = "bottom",
           axis.line = element_blank()
     )
-ggsave(heatmap_calendar, filename=here::here('figures', 'heatmap_calendar.png'), height=3, width=4)
 title <- ggdraw() + 
     draw_label(
         "Activity Summary",
@@ -230,7 +229,7 @@ title <- ggdraw() +
         plot.margin = margin(10, 10, 0, 240)
     )
 # combine github-style calendar heatmap & strava-style stacked bar plot
-plots_last_4_wks <- cowplot::plot_grid(heatmap_calendar, bar_time_stacked_4_weeks, align = "h")
+plots_last_4_wks <- cowplot::plot_grid(heatmap_calendar_4k, bar_time_stacked_4_weeks, align = "h")
 plot_summary_4_wks <- cowplot::plot_grid(title, plots_last_4_wks, rel_heights = c(0.1, 1), ncol=1)
 ggsave(plot_summary_4_wks, filename=here::here('figures', 'plot_summary_4_weeks.png'), height=4, width=8)
 # TODO: annotate with personal events (bought commuter bike, bought road bike, etc)
@@ -321,6 +320,35 @@ bar_plot_day <- plot_bar_facet(act_data, "yday") +
                        labels=c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", ""))
 ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=7)
+
+# all-time calendar heatmap (github contribution style)
+heatmap_calendar_all <- act_data %>% 
+    mutate(start_day = lubridate::floor_date(start_date_local, unit="day")) %>%
+    group_by(start_day, year) %>% 
+    summarize(total_time=sum(moving_time_hrs)) %>% 
+    mutate(week = lubridate::week(start_day),
+           wday = wday(start_day, week_start = 1, label = TRUE, abbr = TRUE),
+           year = lubridate::year(start_day)) %>%
+    ggplot(aes(x=week, y=wday, fill=total_time)) + 
+    geom_tile(colour="white", size=1) +
+    facet_wrap(~year, ncol=1) +
+    scale_fill_distiller(type="seq", 
+                         na.value = "white",
+                         direction = 1,
+                         name = "Time (hrs)",
+                         palette = "Blues") +
+    scale_x_continuous(breaks = seq(2.5, 52, 4.3),
+                       labels=c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")) +
+    labs(x = '', y = '') + 
+    theme(panel.background = element_blank(),
+          axis.ticks = element_blank(),
+          legend.position = "bottom",
+          axis.line = element_blank()
+          )
+ggsave(heatmap_calendar_all, filename=here::here('figures', 'heatmap_calendar.png'), height=6, width=get_width(6))
+
+
 
 # jitter type x time
 jitter_plot_time <- act_data %>% filter_count() %>%
@@ -609,6 +637,7 @@ ggsave(point_run_dist,
 
 
 # combine speed/pace & distance plots over time
+# TODO: use facet_grid for simplicity / DRYness
 point_ride_grid <- cowplot::plot_grid(point_ride_speed, point_ride_dist, align='v', ncol=1)
 ggsave(point_ride_grid, filename=here::here('figures', 'point_ride_grid.png'), height=8, width=6)
 point_run_grid <- cowplot::plot_grid(point_run_pace, point_run_dist, align='v', ncol=1)
