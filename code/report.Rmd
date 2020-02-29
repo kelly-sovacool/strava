@@ -18,12 +18,6 @@ library(rmarkdown)
 source(here::here("code", "read_processed_data.R"))
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.path = "figures/")
 ```
-
-## Progress over time
-```{r}
-knitr::include_graphics(here::here('figures', 'heatmap_calendar.png'))
-```
-
 ## Last 4 weeks
 ```{r, out.height='50%'}
 knitr::include_graphics(here::here("figures", "plot_summary_4_weeks.png"))
@@ -89,6 +83,7 @@ knitr::include_graphics(here::here('figures', "jitter_weekday_dist_grid.png"))
 ```{r}
 knitr::include_graphics(here::here("figures", "line_time.png"))
 knitr::include_graphics(here::here("figures", "line_dist.png"))
+knitr::include_graphics(here::here('figures', 'heatmap_calendar.png'))
 ```
 
 ## Summary table
