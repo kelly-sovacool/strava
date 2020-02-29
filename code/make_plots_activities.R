@@ -460,7 +460,7 @@ plot_box <- function(data, x_str, y_str, fill_str) {
 
 # boxplot weekday x time
 box_plot_weekday_time <- act_data %>% 
-    filter_count() %>%
+    filter_count() %>% filter(moving_time_hrs > 0) %>%
     ggplot(aes(wday, moving_time_hrs, fill=type)) +
     geom_boxplot(aes(fill=type)) +
     scale_fill_manual("type", values=colors) +
@@ -478,7 +478,7 @@ plots[["Rowing"]] <- plot_box(filter_type(act_data, "Rowing"), "wday", "distance
 plots[["Swim"]] <- plot_box(filter_type(act_data, "Swim"), "wday", "distance_mi", "type") + ylim(0, 1)
 box_cow_weekday_dist <- cowplot::plot_grid(plotlist = plots)
 #####
-box_plot_weekday_dist_wrap <- act_data %>% filter_dist() %>% filter_count() %>%
+box_plot_weekday_dist_wrap <- act_data %>% filter(distance_mi > 0) %>% filter_count() %>%
     ggplot(aes(wday, distance_mi)) +
     geom_boxplot(aes(fill=type)) +    
     scale_fill_manual("type", values=colors) +
@@ -701,7 +701,7 @@ ggsave(point_grid_speed_dist, filename = here::here('figures', 'point_grid_speed
 point_dist_time_facet <- act_data %>%
     filter_dist() %>% filter_count() %>%
     ggplot(aes(x=moving_time_min, y=distance_mi,  color=type)) +
-    geom_point() +
+    geom_point(alpha=default_alpha) +
     facet_wrap(~type, scales = "free") +
     scale_color_manual("type", values=colors) +
     scale_x_continuous(breaks=c(0, 15, seq(30, 390, 30))) +
@@ -716,7 +716,7 @@ ggsave(point_dist_time_facet,
 point_dist_time_log2 <- act_data %>%
     filter(distance_mi > 0) %>% filter_count() %>%
     ggplot(aes(x=moving_time_min, y=distance_mi,  color=type)) +
-    geom_point() +
+    geom_point(alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
     scale_x_continuous(breaks=c(0, 15, seq(30, 390, 30))) +
     scale_y_continuous(trans='log2', 
