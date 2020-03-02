@@ -367,7 +367,7 @@ heatmap_calendar_year <- act_data_cal %>%
           legend.position = "bottom",
           axis.line = element_blank()
     )
-ggsave(heatmap_calendar_year, filename=here::here('figures', 'heatmap_calendar_year.png'), height=3, width=10)
+ggsave(heatmap_calendar_year, filename=here::here('figures', 'heatmap_calendar_year.png'), height=3, width=12)
 
 
 # jitter type x time
@@ -575,9 +575,6 @@ point_ride_speed <- act_data %>%
     ylab("Average Speed (mph)") + xlab('') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Ride Speed")
-ggsave(point_ride_speed, 
-       filename=here::here("figures", "point_ride_speed.png"), 
-       width = default_width, height = default_height)
 
 point_ride_dist <- act_data %>% 
     filter_type('Ride') %>% 
@@ -600,9 +597,6 @@ point_ride_dist <- act_data %>%
     ylab("Distance (mi)") + xlab('') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Ride Distance")
-ggsave(point_ride_dist, 
-       filename=here::here("figures", "point_ride_dist.png"), 
-       width = default_width, height = default_height)
 
 point_run_pace <- act_data %>% 
     filter_type('Run') %>% 
@@ -625,9 +619,6 @@ point_run_pace <- act_data %>%
     ylab("Average Pace (min/mi)") + xlab('') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Run Pace")
-ggsave(point_run_pace, 
-       filename=here::here("figures", "point_run_pace.png"), 
-       width = default_width, height = default_height)
 
 point_run_dist <- act_data %>% 
     filter_type('Run') %>% 
@@ -651,9 +642,6 @@ point_run_dist <- act_data %>%
     ylab("Distance (mi)") + xlab('') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Run Distance")
-ggsave(point_run_dist, 
-       filename=here::here("figures", "point_run_dist.png"), 
-       width = default_width, height = default_height)
 
 
 # combine speed/pace & distance plots over time

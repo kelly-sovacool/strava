@@ -30,6 +30,8 @@
 
 ![](heatmap_calendar.png)
 
+![](heatmap_calendar_year.png)
+
 ![](jitter_dist_year.png)
 
 ![](jitter_grid_speed_pace.png)
