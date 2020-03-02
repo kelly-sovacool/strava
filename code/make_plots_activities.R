@@ -322,6 +322,7 @@ bar_plot_day <- plot_bar_facet(act_data, "yday") +
 ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=7)
 
 # all-time calendar heatmap (github contribution style)
+# TODO: fix week integers (should start over at Monday)
 heatmap_calendar_all <- act_data %>% 
     mutate(start_day = lubridate::floor_date(start_date_local, unit="day")) %>%
     group_by(start_day, year) %>% 
