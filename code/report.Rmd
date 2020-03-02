@@ -48,9 +48,15 @@ knitr::include_graphics(here::here('figures', 'point_run_grid.png'))
 
 ## Progress by year
 
+### Previous 52 weeks
 ```{r}
-knitr::include_graphics(here::here("figures", "bar_all_month.png"))
+knitr::include_graphics(here::here('figures', 'heatmap_calendar_year.png'))
+```
+
+### All Strava activities
+```{r}
 knitr::include_graphics(here::here('figures', 'heatmap_calendar.png'))
+knitr::include_graphics(here::here("figures", "bar_all_month.png"))
 ```
 
 ```{r}

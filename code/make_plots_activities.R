@@ -323,13 +323,15 @@ ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=
 
 # all-time calendar heatmap (github contribution style)
 # TODO: fix week integers (should start over at Monday)
-heatmap_calendar_all <- act_data %>% 
+act_data_cal <- act_data %>% 
     mutate(start_day = lubridate::floor_date(start_date_local, unit="day")) %>%
     group_by(start_day, year) %>% 
     summarize(total_time=sum(moving_time_hrs)) %>% 
     mutate(week = lubridate::week(start_day),
+           week_date = floor_date(start_day, unit='week', week_start = 1),
            wday = wday(start_day, week_start = 1, label = TRUE, abbr = TRUE),
-           year = lubridate::year(start_day)) %>%
+           year = lubridate::year(start_day))
+heatmap_calendar_all <- act_data_cal %>%
     ggplot(aes(x=week, y=wday, fill=total_time)) + 
     geom_tile(colour="white", size=1) +
     facet_wrap(~year, ncol=1) +
@@ -348,7 +350,24 @@ heatmap_calendar_all <- act_data %>%
           axis.line = element_blank()
           )
 ggsave(heatmap_calendar_all, filename=here::here('figures', 'heatmap_calendar.png'), height=6, width=get_width(6))
-
+heatmap_calendar_year <- act_data_cal %>% 
+    filter_last_n_weeks(date_col = start_day, 
+                        num_weeks_ago = 52) %>%
+    ggplot(aes(x=week_date, y=wday, fill=total_time)) + 
+    geom_tile(colour="white", size=1) +
+    scale_fill_distiller(type="seq", 
+                         na.value = "white",
+                         direction = 1,
+                         name = "Time (hrs)",
+                         palette = "Blues") +
+    scale_x_datetime(date_breaks = "1 month", date_labels = "%b\n%Y") +
+    labs(x = '', y = '') + 
+    theme(panel.background = element_blank(),
+          axis.ticks = element_blank(),
+          legend.position = "bottom",
+          axis.line = element_blank()
+    )
+ggsave(heatmap_calendar_year, filename=here::here('figures', 'heatmap_calendar_year.png'), height=3, width=10)
 
 
 # jitter type x time

@@ -54,4 +54,4 @@ See all plots in the [figures](figures/) directory
 
 ![](figures/line_time.png)
 
-![](figures/heatmap_calendar.png)
+![](figures/heatmap_calendar_year.png)
