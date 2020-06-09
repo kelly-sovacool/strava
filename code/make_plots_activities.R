@@ -11,6 +11,7 @@ library(readr)
 library(scales)
 library(tidyr)
 source(here::here("code", "read_processed_data.R"))
+source(here::here("code", "utils.R"))
 # TODO: label plot with all data over time with lines for each year
 # TODO: DRY & modularize the code 
 # TODO: use rmarkdown chunk fig.path option instead of ggsave
@@ -28,109 +29,18 @@ if (exists("snakemake")) {
     years = 2017:2019
 }
 theme_set(theme_classic())
-set_colors <- function(data) {
-    palette = RColorBrewer::brewer.pal(n = 10, name = "Paired")
-    colors = list()
-    colors[["Ride"]] <- palette[[4]]
-    colors[["Run"]] <- palette[[8]]
-    colors[["RockClimbing"]] <- palette[[3]]
-    colors[["Rowing"]] <- palette[[1]]
-    colors[["Swim"]] <- palette[[2]]
-    colors[["Hike"]] <- palette[[6]]
-    colors[["Walk"]] <- palette[[5]]
-    colors[["Elliptical"]] <- palette[[7]]
-    colors[["NordicSki"]] <- palette[[10]]
-    colors[["Yoga"]] <- palette[[9]]
-    return(colors)
-}
-
-filter_year <- function(data, date_col, year_str) {
-    year_interval <- lubridate::interval(lubridate::ymd(paste0(year_str, "-01-01")),
-                                         lubridate::ymd(paste0(year_str, "-12-31")))
-    return(data %>% 
-               filter(UQ(as.symbol(date_col)) %within% year_interval)
-    )
-}
-
-filter_last_n_weeks <- function(data, 
-                                date_col = start_date_local,
-                                num_weeks_ago=4) {
-    week_date_thresh <- lubridate::floor_date(lubridate::today() - lubridate::dweeks(num_weeks_ago), 
-                                              unit='week', week_start = 1)
-    return(
-        data %>% 
-            filter(lubridate::floor_date({{ date_col }}, 
-                                         unit='week', week_start = 1
-                                         ) > week_date_thresh)
-    )
-}
-
-filter_dist <- function(data) {
-    types_to_keep <- data %>% 
-        group_by(type) %>% 
-        summarise(total_dist_mi=sum(distance_mi),
-                  n=n()) %>% 
-        filter(total_dist_mi > 0) %>% 
-        pull(type)
-    return(
-        data %>%
-            filter(type %in% types_to_keep)
-    )
-}
-
-filter_count <- function(data, min = 5) {
-    types_to_keep <- data %>%
-        group_by(type) %>%
-        summarise(n=n()) %>%
-        filter(n > min) %>%
-        pull(type)
-    return(data %>%
-               filter(type %in% types_to_keep))
-}
-
-filter_type <- function(data, type_str) {
-    filter(data, as.character(type) == type_str)
-}
-
-plot_bar_facet <- function(data, x_col_str, scale = "fixed") {
-    ggplot2::ggplot(data, aes_string(x=x_col_str, y="moving_time_hrs", fill="type")) +
-        geom_col(position="stack") +
-        scale_fill_manual("type", values=colors) +
-        facet_wrap(~year, nrow = length(data$year %>% unique()), scale=scale) +
-        theme_classic()
-}
-
-# activities binned by week 
-plot_bar_week <- function(data, ymax) {
-    colors <- set_colors(data)
-    plot <- data %>% ggplot2::ggplot(aes(x=week, y=moving_time_hrs, fill=type)) +
-        geom_col(position="stack") +
-        scale_fill_manual("type", values=colors) +
-        ylim(0, ymax) +
-        scale_x_datetime(date_breaks = "4 weeks", date_labels = "%b %d") +
-        theme_classic() +
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-}
 
 # default_aspect_ratio <- 4/3
 default_height <- 6
-get_width <- function(height=6, aspect_ratio=4/3) {
-    height * aspect_ratio
-}
 default_width <- get_width()
-get_height <- function(width=8, aspect_ratio=4/3) {
-    width / aspect_ratio
-}
 default_alpha <- 0.7
 
 ### Load the data ###
-
 act_data <- read_data(filename_csv)
 
 colors <- set_colors(act_data)
 
 ### Make the plots ###
-
 
 ## summarize last 4 weeks ##
 act_data_last_4_weeks_sum <- act_data %>% 
