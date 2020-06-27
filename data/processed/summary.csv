@@ -11,7 +11,7 @@ year,type,n,sum_dist_mi,med_dist_mi,sum_time_hrs,med_time_hrs
 2019,Hike,3,9.9,2.8,4.6,2
 2019,Walk,1,3.8,3.8,1.3,1.3
 2019,Elliptical,1,3.2,3.2,0.7,0.7
-2020,Ride,75,1641.5,22.4,127.7,1.6
+2020,Ride,76,1663.1,22.3,129.3,1.6
 2020,Run,53,221.2,4,44.3,0.8
 2020,RockClimbing,27,0,0,32.9,1.5
 2020,Swim,16,11.4,0.6,18.5,0.8
@@ -19,5 +19,5 @@ year,type,n,sum_dist_mi,med_dist_mi,sum_time_hrs,med_time_hrs
 2020,NordicSki,2,16.8,8.4,8.6,4.3
 2020,Hike,1,5.5,5.5,3,3
 2020,Yoga,7,0,0,6.9,1
-2020,Walk,9,10.6,1.1,3.8,0.4
+2020,Walk,10,11.7,1.1,4.2,0.4
 2020,Workout,1,0,0,0.8,0.8
