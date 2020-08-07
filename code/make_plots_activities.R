@@ -333,6 +333,7 @@ jitter_plot_dist <- act_data %>%
 ggsave(jitter_plot_dist, filename = here::here("figures", "jitter_type_dist.png"), height = 6, width = get_width(6))
 
 # log2-transform for better distance comparison
+max_dist <- act_data %>% pull(distance_mi) %>% max()
 jitter_plot_dist_log2 <- act_data %>% 
     filter_dist() %>% 
     filter_count() %>%
@@ -342,7 +343,7 @@ jitter_plot_dist_log2 <- act_data %>%
                  geom = "crossbar", width = 0.9, color="gray35") +
     geom_jitter(aes(color=type), alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
-    scale_y_continuous(trans="log2", limits=c(0.25, 105), breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
+    scale_y_continuous(trans="log2", limits=c(0.25, max_dist), breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
     ggtitle("Strava Activities") +
     theme_classic()
 ggsave(jitter_plot_dist_log2, filename = here::here("figures", "jitter_type_dist_log2.png"), height = 6, width = get_width(6))
@@ -497,7 +498,7 @@ point_ride_dist <- act_data %>%
     geom_point(alpha=default_alpha) +
     scale_x_datetime(date_breaks = "3 months", 
                      date_labels = "%b %Y") +
-    scale_y_continuous(trans='log2', limits=c(0.25, 105), 
+    scale_y_continuous(trans='log2', limits=c(0.25, max_dist), 
                        breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
     scale_fill_distiller(type="div", 
                          palette = 'RdYlBu',
