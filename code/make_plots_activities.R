@@ -44,7 +44,7 @@ colors <- set_colors(act_data)
 
 ## summarize last 4 weeks ##
 act_data_last_4_weeks_sum <- act_data %>% 
-    filter_last_n_weeks(num_weeks_ago = 4) %>% 
+    filter_last_n_weeks(num_weeks_ago = 5) %>% 
     mutate(type = fct_rev(type)) %>%
     group_by(type) %>%
     summarize(total_dist=round(sum(distance_mi),1),
