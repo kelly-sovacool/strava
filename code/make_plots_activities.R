@@ -500,7 +500,7 @@ point_ride_dist <- act_data %>%
     scale_x_datetime(date_breaks = "3 months", 
                      date_labels = "%b %Y") +
     scale_y_continuous(trans='log2', limits=c(0.25, max_dist), 
-                       breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100)) +
+                       breaks = c(0.3, 0.5, 1, 3.1, 6.2, 13.1, 24.8, 40, 62.1, 100, max_dist)) +
     scale_fill_distiller(type="div", 
                          palette = 'RdYlBu',
                          name = "Avg Speed (mph)"
