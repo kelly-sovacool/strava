@@ -1,3 +1,4 @@
+set.seed(19960207)
 library(cowplot)
 library(dplyr)
 library(forcats)
