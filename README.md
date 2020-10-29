@@ -55,3 +55,5 @@ See all plots in the [figures](figures/) directory
 ![](figures/line_time.png)
 
 ![](figures/heatmap_calendar_year.png)
+
+![](figures/bar_time_last_12_mo.png)

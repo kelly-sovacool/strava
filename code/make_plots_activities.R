@@ -228,9 +228,25 @@ bar_plot_day <- plot_bar_facet(act_data, "yday") +
     scale_x_continuous(breaks = c(1,31,59,90,120,151,
                                   181,212,243,273,304,334,
                                   365), 
-                       labels=c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", ""))
+                       labels=c(month.abb, ""))
 ggsave(bar_plot_day, filename=filename_bar_all_day, height=get_height(7), width=7)
+
+# previous 12 months
+date_thresh <- lubridate::floor_date(lubridate::today() - lubridate::dmonths(12), 
+                                          unit='month', week_start = 1)
+act_data_last_12_mo <- act_data %>% filter(lubridate::floor_date(start_date, unit='month', week_start = 1) > date_thresh) %>% 
+    mutate(month_year = lubridate::floor_date(start_date, unit='month') %>% as_date())
+month_starts <- act_data_last_12_mo %>% pull(month_year) %>% unique() %>% as_date()
+bar_time_last_12_mo <- act_data_last_12_mo %>% 
+    ggplot(aes(x=month_year, y=moving_time_hrs, fill=type)) + 
+    geom_col(position='stack') + 
+    scale_fill_manual('type', values = colors) +
+    scale_x_date(labels = month_starts %>% 
+                     sapply(function (x) glue("{lubridate::month(x, label = TRUE)}-{lubridate::year(x)}")),
+                 breaks = month_starts) +
+    labs(x = '') +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+ggsave(bar_time_last_12_mo, filename = here::here('figures', 'bar_time_last_12_mo.png'), height = 6, width = get_width(6))
 
 # all-time calendar heatmap (github contribution style)
 # TODO: fix week integers (should start over at Monday)
