@@ -20,6 +20,8 @@
 
 ![](bar_sum_hrs.png)
 
+![](bar_time_last_12_mo.png)
+
 ![](bar_time_last_4_weeks.png)
 
 ![](box_weekday_dist_wrap.png)
