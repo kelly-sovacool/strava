@@ -287,7 +287,7 @@ jitter_plot_time <- act_data %>% filter_count() %>%
                  geom = "crossbar", width = 0.9, color="gray35") +
     geom_jitter(aes(color=type), alpha=default_alpha) +
     scale_color_manual("type", values=colors) +
-    scale_y_continuous(breaks=0:7) +
+    scale_y_continuous(breaks=0:max(act_data %>% pull(moving_time_hrs))) +
     ggtitle("Strava Activities") +
     theme_classic() +
     theme(legend.position = "none")
