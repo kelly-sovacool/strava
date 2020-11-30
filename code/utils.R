@@ -5,6 +5,7 @@ set_colors <- function(data) {
     colors[["Run"]] <- palette[[8]]
     colors[["RockClimbing"]] <- palette[[3]]
     colors[["Rowing"]] <- palette[[1]]
+    colors[['Kayaking']] <- colors[['Rowing']]
     colors[["Swim"]] <- palette[[2]]
     colors[["Hike"]] <- palette[[6]]
     colors[["Walk"]] <- palette[[5]]
