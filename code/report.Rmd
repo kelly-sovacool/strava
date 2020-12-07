@@ -4,6 +4,7 @@ author: "Kelly Sovacool"
 date: "`r format(Sys.Date(), '%Y-%m-%d')`"
 output:
   html_document:
+    theme: "yeti"
     toc: true
     toc_float: true
 github-repo: kelly-sovacool/strava
