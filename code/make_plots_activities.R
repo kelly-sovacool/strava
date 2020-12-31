@@ -318,7 +318,7 @@ jitter_plot_time_year <- act_data %>% filter(type %in% c("Ride", "Run")) %>%
     geom_jitter(aes(color=type), alpha=default_alpha) +
     facet_wrap(~type, nrow=1, scale="free") +
     scale_color_manual("type", values=colors) +
-    scale_y_continuous(breaks=0:7) +
+    scale_y_continuous(breaks=0:max(act_data %>% pull(moving_time_hrs))) +
     theme_classic() +
     theme(legend.position = "none")
 ggsave(jitter_plot_time_year, filename = here::here("figures", "jitter_time_year.png"), height = 5, width = get_width(5))
