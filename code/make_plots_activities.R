@@ -444,7 +444,7 @@ line_plot_time <- act_data %>%
     filter_count() %>%
     ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
     geom_line() +
-    scale_colour_manual(values=unlist(colors, use.names=FALSE)) +
+    scale_colour_manual(values=unlist(colors))+#, use.names=FALSE)) +
     scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
     scale_y_continuous(labels=label_comma()) +
     ylab("elapsed hrs (cumulative)") +
@@ -460,7 +460,7 @@ line_plot_dist <- act_data %>%
     filter_dist() %>%
     ggplot(aes(x=start_date, y=elapsed_dist_cum_type, color=type)) +
     geom_line() +
-    scale_colour_manual(values=unlist(colors, use.names=FALSE)) +
+    scale_colour_manual(values=unlist(colors))+#, use.names=FALSE)) +
     scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
     scale_y_continuous(breaks=seq(0, max(act_data$elapsed_dist_cum_type), 500),
                        labels=label_comma()) +
