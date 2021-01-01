@@ -46,10 +46,11 @@ ggsave(bar_sum_hrs, filename = here::here("figures", "bar_sum_hrs.png"), height 
 height <- 4
 dist_nye_2020 <- table_sum %>%
     filter_dist_sum() %>%
-    filter(year %in% c(2019, 2020)) %>% 
+    filter(year %in% c(2019, 2020), 
+           type %in% c('Ride', 'Run', 'RockClimbing', 'Hike', 'Swim')) %>% 
     ggplot(aes(type, sum_dist_mi, fill=type, label=sum_dist_mi)) +
     geom_col(position="dodge") +
-    geom_text(vjust=-0.2, hjust=0.4,
+    geom_text(vjust=-0.2, hjust=0.5,
               position = position_dodge(width=1)) +
     scale_fill_manual("type", values=colors) +
     facet_wrap(~year, nrow=1) +
@@ -64,7 +65,8 @@ ggsave(dist_nye_2020,
 
 time_nye_2020 <- table_sum %>%
     filter_time_sum() %>%
-    filter(year %in% c(2019, 2020)) %>% 
+    filter(year %in% c(2019, 2020), 
+           type %in% c('Ride', 'Run', 'RockClimbing', 'Hike', 'Swim')) %>% 
     ggplot(aes(type, sum_time_hrs, fill=type, label=sum_time_hrs)) +
     geom_col(position="dodge") +
     geom_text(vjust=-0.1, hjust=0.5,

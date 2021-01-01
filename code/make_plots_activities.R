@@ -454,6 +454,22 @@ line_plot_time <- act_data %>%
     ggtitle("Cumulative Activity Time (hrs)")
 ggsave(line_plot_time, filename=here::here("figures", "line_time.png"), width = default_width, height = default_height)
 
+line_plot_time_nye_2020 <- act_data %>% 
+    filter_count() %>%
+    filter(year %in% c(2019, 2020)) %>% 
+    ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
+    geom_line() +
+    scale_colour_manual(values=unlist(colors))+#, use.names=FALSE)) +
+    scale_x_datetime(date_breaks = "3 months", date_labels = "%b %Y") +
+    scale_y_continuous(labels=label_comma()) +
+    labs(color = 'activity', x = '', y = "cumulative hrs elapsed") +
+    theme_classic() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(line_plot_time_nye_2020, 
+       filename=here::here("figures", "line_time_nye_2020.png"), 
+       height = 3.5,
+       width = get_width(3.5))
+
 # cumulative activity distance
 line_plot_dist <- act_data %>% 
     filter_count() %>%
