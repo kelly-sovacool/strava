@@ -40,3 +40,42 @@ bar_sum_hrs <- table_sum %>%
     theme(axis.text.x=element_text(angle=45, hjust=1),
           legend.position = "none")
 ggsave(bar_sum_hrs, filename = here::here("figures", "bar_sum_hrs.png"), height = 5, width = 1.5 * get_width(5))
+
+
+# one-offs
+height <- 5
+dist_nye_2020 <- table_sum %>%
+    filter_dist_sum() %>%
+    filter(year %in% c(2019, 2020)) %>% 
+    ggplot(aes(type, sum_dist_mi, fill=type, label=sum_dist_mi)) +
+    geom_col(position="dodge") +
+    geom_text(vjust=-0.3, 
+              position = position_dodge(width=1)) +
+    scale_fill_manual("type", values=colors) +
+    facet_wrap(~year, nrow=1) +
+    scale_y_continuous(breaks=pretty_breaks()) +
+    theme_classic() +
+    theme(axis.text.x=element_text(angle=45, hjust=1),
+          legend.position = "none") +
+    labs(y = 'Distance (mi)', x = '')
+ggsave(dist_nye_2020, 
+       filename = here::here("figures", "dist_nye_2020.png"), 
+       height = height, width = get_width(height))
+
+time_nye_2020 <- table_sum %>%
+    filter_time_sum() %>%
+    filter(year %in% c(2019, 2020)) %>% 
+    ggplot(aes(type, sum_time_hrs, fill=type, label=sum_time_hrs)) +
+    geom_col(position="dodge") +
+    geom_text(vjust=-0.2,
+              position = position_dodge(width=0.5)) +
+    scale_fill_manual("type", values=colors) +
+    facet_wrap(~year, nrow=1) +
+    scale_y_continuous(breaks=pretty_breaks()) +
+    theme_classic() +
+    theme(axis.text.x=element_text(angle=45, hjust=1),
+          legend.position = "none") +
+    labs(y = 'Moving Time (hrs)', x = '')
+ggsave(time_nye_2020, 
+       filename = here::here("figures", "time_nye_2020.png"), 
+       height = height, width = get_width(height))
