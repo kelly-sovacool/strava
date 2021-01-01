@@ -442,12 +442,12 @@ ggsave(box_plot_weekday_dist_wrap,
 # cumulative activity time
 line_plot_time <- act_data %>% 
     filter_count() %>%
-    ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
+    ggplot(aes(x=start_date, y=elapsed_hrs_cum_type / 60 / 60, color=type)) +
     geom_line() +
     scale_colour_manual(values=unlist(colors))+#, use.names=FALSE)) +
     scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
     scale_y_continuous(labels=label_comma()) +
-    ylab("elapsed hrs (cumulative)") +
+    ylab("elapsed time (cumulative hrs)") +
     xlab("") +
     theme_classic() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
@@ -457,12 +457,12 @@ ggsave(line_plot_time, filename=here::here("figures", "line_time.png"), width = 
 line_plot_time_nye_2020 <- act_data %>% 
     filter_count() %>%
     filter(year %in% c(2019, 2020)) %>% 
-    ggplot(aes(x=start_date, y=elapsed_hrs_cum_type, color=type)) +
+    ggplot(aes(x=start_date, y=elapsed_hrs_cum_type / 60 / 60, color=type)) +
     geom_line() +
     scale_colour_manual(values=unlist(colors))+#, use.names=FALSE)) +
     scale_x_datetime(date_breaks = "3 months", date_labels = "%b %Y") +
-    scale_y_continuous(labels=label_comma()) +
-    labs(color = 'activity', x = '', y = "cumulative hrs elapsed") +
+    scale_y_continuous(breaks = pretty_breaks()) +
+    labs(color = 'activity', x = '', y = "cumulative time elapsed (hrs)") +
     theme_classic() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave(line_plot_time_nye_2020, 
