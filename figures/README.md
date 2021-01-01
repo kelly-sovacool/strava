@@ -8,6 +8,8 @@
 
 ![](bar_2020.png)
 
+![](bar_2021.png)
+
 ![](bar_all_day.png)
 
 ![](bar_all_month.png)
