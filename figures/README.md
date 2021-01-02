@@ -32,6 +32,8 @@
 
 ![](dag.svg)
 
+![](dist_nye_2020.png)
+
 ![](heatmap_calendar.png)
 
 ![](heatmap_calendar_year.png)
@@ -60,6 +62,8 @@
 
 ![](line_time.png)
 
+![](line_time_nye_2020.png)
+
 ![](plot_summary_4_weeks.png)
 
 ![](point_dist_time_facet.png)
@@ -81,4 +85,6 @@
 ![](point_run_grid.png)
 
 ![](point_run_pace.png)
+
+![](time_nye_2020.png)
 
