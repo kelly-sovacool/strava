@@ -13,6 +13,7 @@ set_colors <- function(data) {
     colors[["NordicSki"]] <- palette[[10]]
     colors[["Yoga"]] <- palette[[9]]
     colors[['Workout']] <- palette[[11]]
+    colors[['WeightTraining']] <- colors[['Workout']]
     return(colors)
 }
 get_width <- function(height=6, aspect_ratio=4/3) {
