@@ -27,6 +27,7 @@ act_data <- act_data_raw %>%
            elapsed_time_hrs = round((elapsed_time / 60 / 60), 1),
            moving_time_min = round((moving_time / 60), 1),
            moving_time_hrs = round((moving_time / 60 / 60), 1),
+           type = recode(type, 'WeightTraining' = 'Workout'),
            type = fct_reorder(type, elapsed_time, .fun = sum, .desc=TRUE),
            wday = start_date_local %>% lubridate::ymd_hms() %>% lubridate::wday(week_start = 1) %>% as.integer(),
            mday = start_date_local %>% lubridate::ymd_hms() %>% lubridate::mday(),
