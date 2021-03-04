@@ -38,8 +38,12 @@ default_alpha <- 0.7
 
 ### Load the data ###
 act_data <- read_data(filename_csv)
-
 colors <- set_colors(act_data)
+
+nyears_ago <- 3
+year_thresh <- lubridate::year(lubridate::today()) - nyears_ago
+act_data_last_n_years <- act_data %>% filter(year >= year_thresh)
+
 
 ### Make the plots ###
 
@@ -228,12 +232,13 @@ ggsave(line_plot_month_dist, filename = here::here('figures', 'line_plot_month_d
        width = default_width, height = default_height)
 
 # binned by month
-ymax_month <- act_data %>% 
+ymax_month <- act_data_last_n_years %>% 
     group_by(month) %>% 
     summarise(total_hrs = sum(moving_time_hrs)) %>% 
     pull(total_hrs) %>% 
     max()
-bar_plot_month <- plot_bar_facet(act_data, "month") + 
+bar_plot_month <- act_data_last_n_years %>% 
+    plot_bar_facet("month") + 
     ylim(0, ymax_month) + 
     xlim(0, 12) +
     scale_x_continuous(breaks=1:12, labels = month.abb)
@@ -273,7 +278,7 @@ ggsave(bar_time_last_12_mo, filename = here::here('figures', 'bar_time_last_12_m
 
 # all-time calendar heatmap (github contribution style)
 # TODO: fix week integers (should start over at Monday)
-act_data_cal <- act_data %>% 
+act_data_cal <- act_data_last_n_years %>% 
     mutate(start_day = lubridate::floor_date(start_date_local, unit="day")) %>%
     group_by(start_day, year) %>% 
     summarize(total_time=sum(moving_time_hrs)) %>% 

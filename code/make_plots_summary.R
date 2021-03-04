@@ -10,8 +10,13 @@ table_sum <- readr::read_csv(here::here("data" ,"processed", "summary.csv")) %>%
     mutate(type = fct_reorder(type, sum_time_hrs, .fun = sum, .desc=TRUE))
 colors <- set_colors(table_sum)
 
+nyears_ago <- 2
+year_thresh <- lubridate::year(lubridate::today()) - nyears_ago
+sum_last_n_years <- table_sum %>% filter(year >= year_thresh)
+
+
 # plots summary stats
-bar_sum_dist <- table_sum %>%
+bar_sum_dist <- sum_last_n_years %>%
     filter_dist_sum() %>%
     ggplot(aes(type, sum_dist_mi, fill=type, label=sum_dist_mi)) +
     geom_col(position="dodge") +
@@ -26,7 +31,7 @@ bar_sum_dist <- table_sum %>%
           legend.position = "none")
 ggsave(bar_sum_dist, filename = here::here("figures", "bar_sum_dist.png"), height = 5, width = 1.5 * get_width(5))
 
-bar_sum_hrs <- table_sum %>%
+bar_sum_hrs <- sum_last_n_years %>%
     filter_time_sum() %>%
     ggplot(aes(type, sum_time_hrs, fill=type, label=sum_time_hrs)) +
     geom_col(position="dodge") +
@@ -43,6 +48,8 @@ ggsave(bar_sum_hrs, filename = here::here("figures", "bar_sum_hrs.png"), height 
 
 
 # one-offs
+# no need to run these but once
+one_and_done <- function() {
 height <- 4
 dist_nye_2020 <- table_sum %>%
     filter_dist_sum() %>%
@@ -81,3 +88,4 @@ time_nye_2020 <- table_sum %>%
 ggsave(time_nye_2020, 
        filename = here::here("figures", "time_nye_2020.png"), 
        height = height, width = get_width(height))
+}
