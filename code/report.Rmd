@@ -19,9 +19,16 @@ library(rmarkdown)
 source(here::here("code", "read_processed_data.R"))
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE, fig.path = "figures/")
 ```
-## Last 4 weeks
+
+## Recent activity
+
 ```{r, out.height='50%'}
 knitr::include_graphics(here::here("figures", "plot_summary_4_weeks.png"))
+```
+
+
+```{r}
+knitr::include_graphics(here::here('figures', 'bar_mpw_6mo.png'))
 ```
 
 ## Duration
