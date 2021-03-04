@@ -183,8 +183,7 @@ ggsave(mpw_facet_6mo, filename = here::here('figures', 'bar_mpw_6mo.png'),
 
 for (year in years) {
     year <- as.character(year)
-    bar_plot_year <- plot_bar_week(filter_year(act_data, "start_date", year), 
-                                   ymax_week) +
+    bar_plot_year <- plot_bar_week(filter_year(act_data, "start_date", year)) +
         ggtitle(paste0(year, " Activites"))
     ggsave(bar_plot_year, filename = here::here("figures", paste0("bar_", year,".png")),
            width = 6, height = get_height(6))
