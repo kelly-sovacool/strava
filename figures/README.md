@@ -18,6 +18,8 @@
 
 ![](bar_dist_last_4_weeks.png)
 
+![](bar_mpw_6mo.png)
+
 ![](bar_sum_dist.png)
 
 ![](bar_sum_hrs.png)
