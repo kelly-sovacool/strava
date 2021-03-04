@@ -176,7 +176,8 @@ mpw_facet_6mo <- act_data %>%
     scale_fill_manual("type", values=colors) +
     scale_x_datetime(date_breaks = '1 week', date_labels = "%b %d") +
     labs(title = "Weekly mileage", y = 'Distance (mi)', x = '') +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          legend.position = 'None')
 ggsave(mpw_facet_6mo, filename = here::here('figures', 'bar_mpw_6mo.png'), 
        width = default_width, height = default_height)
 
