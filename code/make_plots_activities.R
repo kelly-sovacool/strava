@@ -145,16 +145,20 @@ plot_summary_4_wks <- cowplot::plot_grid(title, plots_last_4_wks, rel_heights = 
 ggsave(plot_summary_4_wks, filename=here::here('figures', 'plot_summary_4_weeks.png'), height=4, width=8)
 # TODO: annotate with personal events (bought commuter bike, bought road bike, etc)
 
-ymax_week <- act_data %>%
-    group_by(week) %>%
-    summarise(total_hrs = sum(moving_time_hrs)) %>% 
-    pull(total_hrs) %>% 
-    max()
-
-bar_plot_all_week <- plot_bar_week(act_data, ymax_week) +
+bar_plot_all_week <- plot_bar_week(act_data) +
     scale_x_datetime(date_breaks = "1 month", date_labels = "%b %Y") +
     ggtitle("All Strava Activities")
 ggsave(bar_plot_all_week, filename = filename_bar_all_week,
+       width = default_width, height = default_height)
+
+mpw_run_6mo <- act_data %>% 
+    filter_last_n_weeks(num_weeks_ago = 24) %>% 
+    filter(type == 'Run') %>% 
+    plot_bar_week(yvar = distance_mi) +
+    scale_x_datetime(date_breaks = '1 week', date_labels = "%b %d") +
+    theme(legend.position = 'None') +
+    labs(title = "Weekly running mileage", y = 'Distance (mi)', x = '')
+ggsave(mpw_run_6mo, filename = 'bar_run_mpw_6mo.png', 
        width = default_width, height = default_height)
 
 for (year in years) {

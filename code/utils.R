@@ -74,9 +74,16 @@ plot_bar_facet <- function(data, x_col_str, scale = "fixed") {
         theme_classic()
 }
 # activities binned by week 
-plot_bar_week <- function(data, ymax) {
+plot_bar_week <- function(data, ymax = NA, yvar = moving_time_hrs) {
     colors <- set_colors(data)
-    plot <- data %>% ggplot2::ggplot(aes(x=week, y=moving_time_hrs, fill=type)) +
+    if (is.na(ymax)) {
+        ymax <- data %>% 
+            group_by(week) %>%
+            summarise(total_yvar = sum({{ yvar }})) %>% 
+            pull(total_yvar) %>% 
+            max()
+    }
+    plot <- data %>% ggplot2::ggplot(aes(x=week, y={{ yvar }}, fill=type)) +
         geom_col(position="stack") +
         scale_fill_manual("type", values=colors) +
         ylim(0, ymax) +
