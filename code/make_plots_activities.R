@@ -185,6 +185,20 @@ mpw_facet_6mo <- act_data %>%
 ggsave(mpw_facet_6mo, filename = here::here('figures', 'bar_mpw_6mo.png'), 
        width = default_width, height = default_height)
 
+mpw_facet_nyears <- act_data %>% 
+    filter(year >= year_thresh) %>% 
+    filter(type == 'Run' | type == 'Ride') %>% 
+    ggplot2::ggplot(aes(x=week, y=distance_mi, fill=type)) +
+    geom_col(position="stack") +
+    facet_wrap('type', nrow = 2, scales = 'free_y') +
+    scale_fill_manual("type", values=colors) +
+    scale_x_datetime(date_breaks = '1 month', date_labels = "%b %Y") +
+    labs(title = "Weekly mileage", y = 'Distance (mi)', x = '') +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          legend.position = 'None')
+ggsave(mpw_facet_nyears, filename = here::here('figures', 'bar_mpw_years.png'), 
+       width = default_width, height = default_height)
+
 for (year in years) {
     year <- as.character(year)
     bar_plot_year <- plot_bar_week(filter_year(act_data, "start_date", year)) +

@@ -20,6 +20,8 @@
 
 ![](bar_mpw_6mo.png)
 
+![](bar_mpw_years.png)
+
 ![](bar_sum_dist.png)
 
 ![](bar_sum_hrs.png)
