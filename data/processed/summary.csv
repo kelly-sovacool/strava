@@ -23,7 +23,7 @@ year,type,n,sum_dist_mi,med_dist_mi,sum_time_hrs,med_time_hrs
 2020,NordicSki,2,16.8,8.4,8.6,4.3
 2020,Kayaking,1,1.7,1.7,0.8,0.8
 2021,Ride,5,72,13.5,5.5,1
-2021,Run,44,195.1,4.2,37.9,0.8
+2021,Run,45,198.6,4.1,38.6,0.8
 2021,RockClimbing,19,0,0,13,0.2
-2021,Workout,26,0,0,14.1,0.5
+2021,Workout,27,0,0,15.9,0.5
 2021,Walk,2,3.2,1.6,1.2,0.6
