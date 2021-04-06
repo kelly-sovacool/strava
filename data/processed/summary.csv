@@ -24,7 +24,7 @@ year,type,n,sum_dist_mi,med_dist_mi,sum_time_hrs,med_time_hrs
 2020,Kayaking,1,1.7,1.7,0.8,0.8
 2021,Ride,14,253.3,16.3,20.8,1.45
 2021,Run,56,255.4,4.2,50,0.8
-2021,RockClimbing,25,0,0,22.400000000000002,0.3
+2021,RockClimbing,26,0,0,24,0.5
 2021,Workout,34,0,0,18.6,0.5
 2021,Rowing,1,3.2,3.2,0.5,0.5
 2021,Walk,3,5.8,1.7,2.2,0.6
